@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 90 40" preserveAspectRatio="xMaxYMid" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <path d="M 0 0 L 80 0 L 80 10 C 85.523 10 90 14.477 90 20 C 90 25.523 85.523 30 80 30 L 80 40 L 0 40 Z" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"/>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; text-anchor: middle; white-space: pre; font-size: 15px;" x="40" y="14.616" id="title" bx:origin="0.415386 0.5">Title</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 10px; white-space: pre; text-anchor: middle;" x="29.841" y="35.932" transform="matrix(1, 0, 0, 1.055556, 9.992072, -3.924764)" id="description" bx:origin="0.5 0.5">Descr</text>
+  <ellipse style="stroke: rgb(0, 0, 0);" cx="84" cy="20" rx="4" ry="4" id="out_0"/>
+</svg>

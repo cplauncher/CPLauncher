@@ -1,16 +1,13 @@
-### Hi there 👋
+# CPLauncherApp
+Launcher application that can launch applications with your keyboard
 
-<!--
-**cplauncher/CPLauncher** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+#Build
+*TODO:make the build not depend on QtCreator*
 
-Here are some ideas to get you started:
+First you need to clone repository with
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+git clone -c core.autocrlf=false git@github.com:cplauncher/CPLauncherApp.git
+git clone git@github.com:itay-grudev/SingleApplication.git CPLauncherApp/libs/projects/SingleApplication
+git clone git@github.com:Skycoder42/QHotkey.git CPLauncherApp/libs/projects/QHotkey
+
+Open in QtCreator and build.

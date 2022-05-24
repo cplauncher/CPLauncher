@@ -1,0 +1,13 @@
+List of mandatory libraries for Mac installation
+QtCore.framework
+QtDBus.framework
+QtGui.framework
+QtNetwork.framework
+QtPrintSupport.framework
+QtWidgets.framework
+
+How to make the application invisible in doc in Mac
+/usr/libexec/PlistBuddy -c 'Add :LSUIElement bool true' CpLauncher.app/Contents/Info.plist
+
+How to create mac deployment dmg
+macdeployqt CpLauncher.app -dmg

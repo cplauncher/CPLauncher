@@ -1,0 +1,31 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>res/default_icon.png</file>
+        <file>res/tray_white.png</file>
+        <file>res/error_icon.png</file>
+        <file>res/internet_web_icon.png</file>
+        <file>res/tray_black_loading.png</file>
+        <file>res/tray_black.png</file>
+        <file>res/tray_white_loading.png</file>
+        <file>res/browser_firefox.png</file>
+        <file>res/browser_google-chrome.png</file>
+        <file>res/snippets.png</file>
+        <file>res/calculator.png</file>
+        <file>res/snippetsCollection.png</file>
+    </qresource>
+    <qresource prefix="/workflow">
+        <file>res/wf/basic_square.svg</file>
+        <file>res/wf/basic_transformer.svg</file>
+        <file>res/wf/basic_input.svg</file>
+        <file>res/wf/basic_output.svg</file>
+    </qresource>
+    <qresource prefix="/sounds">
+        <file>res/sounds/bell_1.wav</file>
+        <file>res/sounds/error_1.wav</file>
+        <file>res/sounds/many_clicks_1.wav</file>
+        <file>res/sounds/metal_click_1.wav</file>
+        <file>res/sounds/notification_alert_1.wav</file>
+        <file>res/sounds/notification_alert_2.wav</file>
+        <file>res/sounds/notification_alert_3.wav</file>
+    </qresource>
+</RCC>
