@@ -156,3 +156,53 @@ QString searchProgramInPath(QString programPath) {
     }
     return QString();
 }
+int skipWhiteSpaces(QString&str, int pos) {
+    while(pos<str.length()){
+        QCharRef c=str[pos];
+        if(c.isSpace()){
+            pos++;
+        }else{
+            break;
+        }
+    }
+    return pos;
+}
+
+QStringList splitCsvLine(QString string, QString separator, QString quote) {
+    QStringList result;
+    QString currentLine=string;
+    for(int i=0; i<1000; i++) {
+        int position=skipWhiteSpaces(currentLine, 0);
+        currentLine=currentLine.mid(position);
+        if(currentLine.isEmpty()){
+            break;
+        }
+
+        if(!result.isEmpty()) {
+            if(!currentLine.startsWith(separator)){
+                qDebug()<<"Expected separator ["<<separator<<"] between CSV field, but not found ["<<string<<"]";
+                break;
+            }
+            currentLine=currentLine.mid(separator.length());
+            int position=skipWhiteSpaces(currentLine, 0);
+            currentLine=currentLine.mid(position);
+        }
+
+        if(!currentLine.startsWith(quote)){
+            qDebug()<<"Cannot find start quote while parse CSV line ["<<string<<"]";
+            break;
+        }
+        currentLine=currentLine.mid(quote.length());
+        int endQuote=currentLine.indexOf(quote);
+        if(endQuote==-1) {
+            qDebug()<<"Cannot find end quote while parse CSV line ["<<string<<"]";
+            break;
+        }
+
+        QString value=currentLine.mid(0, endQuote);
+        result.append(value);
+        currentLine=currentLine.mid(endQuote+quote.length());
+    }
+
+    return result;
+}

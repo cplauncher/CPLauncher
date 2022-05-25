@@ -25,6 +25,9 @@ WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appG
     if(type=="extScript") {
         return new ExternalScriptWFNodeHandler(appGlobals, wfNode);
     }
+    if(type=="selector") {
+        return new SelectorWFNodeHandler(appGlobals, wfNode);
+    }
     qDebug()<<"Unknown wfhandler type:"<<type;
     return NULL;
 }

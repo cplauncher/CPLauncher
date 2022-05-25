@@ -38,7 +38,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="hotkeyPanel">
       <property name="sizePolicy">
@@ -339,6 +339,23 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="extScriptHelpLabel">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Text from Script field will be saved and passed as ${scriptFilePath} variable.&lt;/p&gt;&lt;p&gt;Example &lt;a href=&quot;#insertExample&quot;&gt;python ${scriptFilePath}&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QPlainTextEdit" name="extScriptScriptEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
        <item row="3" column="0">
         <widget class="QCheckBox" name="extScriptCaptureOutputCB">
          <property name="text">
@@ -353,22 +370,19 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QPlainTextEdit" name="extScriptScriptEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
+      </layout>
+        </widget>
+     <widget class="QWidget" name="selectorPanel">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="selectorHelpLabel">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;List of items that will be presented to the user.&lt;/p&gt;&lt;p&gt;It should be in &lt;span style=&quot; font-weight:700;&quot;&gt;CSV&lt;/span&gt; format with this &lt;a href=&quot;#insert_header&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#094fd1;&quot;&gt;header&lt;/span&gt;&lt;/a&gt;. The &lt;span style=&quot; font-weight:700;&quot;&gt;id&lt;/span&gt; will be sent as $&lt;span style=&quot; font-weight:700;&quot;&gt;{input}&lt;/span&gt; to the next step.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;#insert_example&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#094fd1;&quot;&gt;Example&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="extScriptHelpLabel">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Text from Script field will be saved and passed as ${scriptFilePath} variable.&lt;/p&gt;&lt;p&gt;Example &lt;a href=&quot;#insertExample&quot;&gt;python ${scriptFilePath}&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
+       <item>
+        <widget class="QPlainTextEdit" name="selectorItemsEdit"/>
        </item>
       </layout>
      </widget>

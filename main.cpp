@@ -15,7 +15,8 @@
 
 
 void test() {
-
+    qDebug()<<"Splitted";
+    qDebug()<<splitCsvLine("``myline``|``some`line``|``123``", "|", "``");
 }
 
 int MAX_LOG_LINES=1000;
@@ -162,7 +163,7 @@ void initTrayManager(AppGlobals*appGlobals) {
     });
     trayManager->addMenu("Quit", []() {
         qDebug() << "Quit menu activated";
-        QApplication::quit();
+        exit(0);
         return true;
     });
 }

@@ -23,5 +23,6 @@ class MyThread : public QThread{
     }
     void run() {runnable();}
  };
+QStringList splitCsvLine(QString string, QString separator, QString quote);
 
 #endif // UTILS_H

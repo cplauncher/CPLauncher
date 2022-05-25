@@ -187,13 +187,33 @@ bool WfNodeEditDialog::editExternalScriptNode(WFNode*node) {
     ui->extScriptAppPath->setText(node->props.value("appPath","").toString());
     ui->extScriptScriptEdit->setPlainText(node->props.value("script","").toString());
     ui->extScriptCaptureOutputCB->setChecked(node->props.value("captureOutput",false).toBool());
-    connect(ui->extScriptHelpLabel, &QLabel::linkActivated,this, [this](QString link) {
+    connect(ui->extScriptHelpLabel, &QLabel::linkActivated,this, [this](QString) {
         ui->extScriptAppPath->insert("python ${scriptFilePath}");
     });
     if(exec()) {
         node->props["appPath"]=ui->extScriptAppPath->text().trimmed();
         node->props["script"]=ui->extScriptScriptEdit->toPlainText().trimmed();
         node->props["captureOutput"]=ui->extScriptCaptureOutputCB->isChecked();
+        return true;
+    }
+
+    return false;
+}
+
+bool WfNodeEditDialog::editSelectorNode(WFNode*node) {
+    showPanel(ui->selectorPanel);
+    setWindowTitle("Edit Selector");
+    ui->selectorItemsEdit->setPlainText(node->props.value("selectorItemsCSV","").toString());
+    connect(ui->selectorHelpLabel, &QLabel::linkActivated,this, [this](QString link) {
+        if(link=="#insert_header") {
+            ui->selectorItemsEdit->insertPlainText("`~`id`~`|`~`text`~`|`~`description`~`|`~`icon`~`");
+        }
+        if(link=="#insert_example") {
+            ui->selectorItemsEdit->insertPlainText("`~`id`~`|`~`text`~`|`~`description`~`|`~`icon`~`\n`~`123`~`|`~`Item 1`~`|`~`Example item`~`|`~`icon://help`~`");
+        }
+    });
+    if(exec()) {
+        node->props["selectorItemsCSV"]=ui->selectorItemsEdit->toPlainText().trimmed();
         return true;
     }
 

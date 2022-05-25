@@ -169,6 +169,16 @@ class TypeTextInputMatcher:public AbstractMatcher {
     void match(MatchContext*matchContext)override;
 };
 
+class ListInputMatcher:public AbstractMatcher {
+    QList<InputItem>items;
+  public:
+    ListInputMatcher(AppGlobals* appGlobals, QList<InputItem>items) {
+        this->appGlobals=appGlobals;
+        this->items=items;
+    }
+    void match(MatchContext*matchContext)override;
+};
+
 class InputItem {
   public:
     InputItem() {};
@@ -233,6 +243,7 @@ class InputDialog : public QWidget {
     InputDialog( AppGlobals*appGlobals, QWidget *parent = nullptr, QApplication*application=nullptr);
     ~InputDialog();
     void select(AbstractMatcher*matcher, std::function<void(InputItem*)>onAcceptEvent);
+    InputItem selectBlocking(AbstractMatcher*matcher, bool*result);
     bool isDialogVisible() {return visible;}
     void hideDialog();
 };

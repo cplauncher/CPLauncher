@@ -94,13 +94,18 @@ class WorkflowConfigurationTabHandler {
         triggersSubMenu->addAction(addHotkeyAction);
         triggersSubMenu->addAction(addExternalTriggerAction);
 
-        //Add filter items
+        //Add transformers items
         QAction*addExtScriptAction=createMenuAction("External Script", [scenePos, this]() {
            addNodeItem(addWFNodeAndHandlerByType("extScript"), scenePos);
            dialogModified();
         });
+        QAction*addSelectorAction=createMenuAction("Selector", [scenePos, this]() {
+           addNodeItem(addWFNodeAndHandlerByType("selector"), scenePos);
+           dialogModified();
+        });
         QMenu*transformersSubMenu=new QMenu("Transformers");
         transformersSubMenu->addAction(addExtScriptAction);
+        transformersSubMenu->addAction(addSelectorAction);
 
         //Add actions items
         QAction*addExecAction=createMenuAction("Execute App", [scenePos, this]() {

@@ -68,3 +68,18 @@ void TypeTextInputMatcher::match(MatchContext*matchContext) {
     item.executable=true;
     matchContext->collectedData.append(item);
 }
+
+void ListInputMatcher::match(MatchContext*matchContext) {
+    int count = 0;
+    for (int i=0;i<items.count(); i++) {
+        InputItem&item=items[i];
+        if (defaultMatch(matchContext, item.keyword, false)) {
+            matchContext->collectedData.append(item);
+            count++;
+            if(count>50){
+                break;
+            }
+        }
+    }
+}
+

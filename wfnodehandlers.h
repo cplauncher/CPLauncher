@@ -348,5 +348,101 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
     }
 };
 
+class SelectorWFNodeHandler:public WFNodeHandler {
+    QString csvQuote="`~`";
+    QString csvSeparator="|";
+  public:
+    SelectorWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
+        :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_transformer.svg") {
+        title="Selector";
+    }
+
+    bool showConfiguration(QWidget*parent=0) override {
+        WfNodeEditDialog dialog(parent, appGlobals);
+        if(dialog.editSelectorNode(configNode)) {
+            nodeItem->updateAfterSettingsChange();
+            return true;
+        }
+        return false;
+    }
+
+    QMap<QString, int>createHeaderMap(QString headerLine) {
+        QStringList list=splitCsvLine(headerLine, csvSeparator, csvQuote);
+        QMap<QString, int>result;
+        int index=0;
+        foreach(QString column, list) {
+            column=column.trimmed().toLower();
+            result[column]=index;
+            index++;
+        }
+        return result;
+    }
+
+    bool checkColumnExists(QMap<QString, int>&header, QString headerLine, QString column) {
+        if(!header.contains(column)) {
+            qDebug()<<"Selector expects CSV with column ["<< column<<"], but it is not found. Columns:"<<splitCsvLine(headerLine, csvQuote, csvSeparator);
+            return false;
+        }
+        return true;
+    }
+
+    void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*plugin) override {
+        Q_UNUSED(inputPortIndex);
+        PlaceholderExpander expander(appGlobals);
+        QString selectorItemsText=configNode->props.value("selectorItemsCSV").toString();
+        selectorItemsText=expander.expand(selectorItemsText, &context);
+        QStringList lineList=selectorItemsText.split("\n");
+        if(lineList.isEmpty()) {
+            qDebug()<<"Selector workflow node expects CSV text with header";
+            return;
+        }
+
+        QString headerLine=lineList.first();
+        QMap<QString, int>header=createHeaderMap(headerLine);
+        if(!checkColumnExists(header, headerLine, "id")||!checkColumnExists(header, headerLine, "text")) {
+            return;
+        }
+        QSet<QString>expectedColumns;
+        expectedColumns<<"id"<<"text"<<"description"<<"icon";
+        foreach(QString column, header.keys()) {
+            if(!expectedColumns.contains(column)) {
+                qDebug()<<"Selector workflow node does not expect column ["<<column<<"]";
+                return;
+            }
+        }
+
+        QList<InputItem>items;
+        for(int i=1;i<lineList.size();i++) {
+            QString csvLine=lineList[i];
+            QStringList csvColumns=splitCsvLine(csvLine, csvSeparator, csvQuote);
+            if(csvColumns.size()!=header.size()) {
+                qDebug()<<"Selector workflow CSV line #"<<(i+1)<<" has columns count["<<csvColumns.size()<<"] different from header ["<<header.size()<<"]";
+                return;
+            }
+            InputItem item;
+            item.executable=true;
+            item.id=csvColumns[header["id"]];
+            item.keyword=csvColumns[header["text"]].toLower();
+            item.text=csvColumns[header["text"]];
+            if(header.contains("description")) {
+                item.smallDescription=csvColumns[header["description"]];
+            }
+            if(header.contains("icon")) {
+                item.icon=csvColumns[header["icon"]];
+            }
+            items.append(item);
+        }
+
+        ListInputMatcher*matcher=new ListInputMatcher(appGlobals,items);
+        bool resultStatus=false;
+        InputItem result=appGlobals->inputDialog->selectBlocking(matcher,&resultStatus);
+        if(resultStatus) {
+            context.variables["input"]=result.id;
+            sendToOutput(plugin, 0, context);
+        }
+    }
+};
+
+
 WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appGlobals);
 #endif // WFNODEHANDLERS_H

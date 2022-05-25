@@ -272,6 +272,21 @@ void InputDialog::select(AbstractMatcher *matcher,
   processMatch();
 }
 
+InputItem InputDialog::selectBlocking(AbstractMatcher*matcher, bool*result){
+    InputItem resultItem;
+    bool res=false;
+    select(matcher,[&resultItem, &res](InputItem*item) {
+        resultItem=*item;
+        res=true;
+    });
+    while(res==false&&visible) {
+        QCoreApplication::processEvents();
+        QThread::msleep(2);
+    }
+    *result=res;
+    return resultItem;
+}
+
 int InputDialog::getIdOrder(const QString &id, const QString &rememberedId) {
   if (id == currentExpandedItem)
     return 20;

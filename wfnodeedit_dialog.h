@@ -20,6 +20,7 @@ public:
     bool editPlaySoundNode(WFNode*node);
     bool editExternalTriggerNode(WFNode*node);
     bool editExternalScriptNode(WFNode*node);
+    bool editSelectorNode(WFNode*node);
 
 private:
     void showPanel(QWidget*widget);

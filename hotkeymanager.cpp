@@ -18,7 +18,6 @@ void HotkeyManager::registerHotkey(QString id, QKeySequence keySequence) {
     } else {
         hotkey = new QHotkey(keySequence, true, appGlobals->application);
         QObject::connect(hotkey, &QHotkey::activated, hotkey, [this, id]() {
-            qDebug() << "Hotkey invoked: "<<id;
             if(this->id2functionMap.contains(id)) {
                 id2functionMap[id]();
             }
@@ -39,7 +38,6 @@ void HotkeyManager::deleteHotkey(QString id) {
 }
 
 void HotkeyManager::activateHotkey(QString hotkeyId) {
-    qDebug()<<"Hotkey activated:"<<hotkeyId;
     if(id2HotkeyMap.contains(hotkeyId)) {
         QHotkey*hotkey=id2HotkeyMap[hotkeyId];
         hotkey->setRegistered(true);
@@ -49,7 +47,6 @@ void HotkeyManager::deactivateHotkey(QString hotkeyId) {
     if(id2HotkeyMap.contains(hotkeyId)) {
         QHotkey*hotkey=id2HotkeyMap[hotkeyId];
         hotkey->setRegistered(false);
-        qDebug()<<"Hotkey deactivated:"<<hotkeyId;
     }
 }
 void HotkeyManager::enable(bool value){
