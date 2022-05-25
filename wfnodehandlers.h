@@ -309,6 +309,7 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
         QProcess*process = new QProcess();
         process->setProgram(expandedApplicationPath);
         process->setArguments(arguments);
+        process->setEnvironment(QStringList()<<"PYTHONIOENCODING=utf-8");
         QString*output=new QString();
         QString*error=new QString();
         QObject::connect(process, &QProcess::stateChanged, process, [this, plugin, output,error, process, context](QProcess::ProcessState state){
