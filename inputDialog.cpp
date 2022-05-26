@@ -1,11 +1,13 @@
 #include "includes.h"
 #include "verticallayout.h"
 #include <QCache>
+#include <QtConcurrent>
 
 const int PANEL_TOTAL_WIDTH=600;
 const int PANEL_TOTAL_HEIGHT=50;
 const int PANEL_ICON_WIDTH=40;
 const int PANEL_ICON_HEIGHT=PANEL_TOTAL_HEIGHT;
+QPixmap*defaultIcon=NULL;
 
 QString removeNewLines(QString&str){
     if(str.contains("\n")){
@@ -14,11 +16,64 @@ QString removeNewLines(QString&str){
     return str;
 }
 
+QFileIconProvider iconProvider;
+QCache<QString, QIcon> iconsCache(1000);
+QMutex getIconMutex;
+
+void insertInIconCache(QString iconPath, QIcon*icon){
+  getIconMutex.lock();
+  iconsCache.insert(iconPath, icon);
+  getIconMutex.unlock();
+}
+QIcon* getFromIconCache(QString iconPath){
+  getIconMutex.lock();
+  if(!iconsCache.contains(iconPath)){
+      getIconMutex.unlock();
+      return NULL;
+  }
+  QIcon*result=iconsCache[iconPath];
+  getIconMutex.unlock();
+  return result;
+}
+
+QIcon getIcon(QString iconPath) {
+  QIcon*cachedIcon=getFromIconCache(iconPath);
+  if (cachedIcon!=NULL) {
+    return *cachedIcon;
+  }
+
+  if (iconPath.startsWith(":")) {
+    // it is resource icon
+    QIcon *icon = new QIcon(iconPath);
+    insertInIconCache(iconPath, icon);
+    return *icon;
+  }
+  QString fileIconPrefix("fileicon://");
+  if (iconPath.startsWith(fileIconPrefix)) {
+    QString iconPathPart = iconPath.mid(fileIconPrefix.size());
+    QIcon *icon = new QIcon(iconProvider.icon(QFileInfo(iconPathPart)));
+    insertInIconCache(iconPath, icon);
+    return *icon;
+  }
+  return getIcon(":/icons/res/internet_web_icon.png");
+}
+
+QPixmap*getDefaultIcon(){
+    if(defaultIcon==NULL){
+        QPixmap*pixmap=new QPixmap(PANEL_ICON_WIDTH, PANEL_ICON_HEIGHT);
+        pixmap->fill(Qt::transparent);
+        defaultIcon=pixmap;
+    }
+    return defaultIcon;
+}
+
 class ItemPanel : public QWidget {
 private:
   QLabel *iconLabel;
   QLabel *captionLabel;
   QLabel *descriptionLabel;
+  QString iconPath;
+  int loadIndex=0;
   int itemIndex;
   std::function<void(ItemPanel*panel)>onClick;
 
@@ -53,7 +108,7 @@ public:
     void setOnClickEvent(std::function<void(ItemPanel*panel)>onClick) {this->onClick=onClick;}
     void setItemIndex(int index) {itemIndex=index;}
     int getItemIndex() {return itemIndex;}
-    void setIcon(QIcon icon) { iconLabel->setPixmap(icon.pixmap(PANEL_ICON_WIDTH, PANEL_ICON_HEIGHT)); }
+    void setIcon(QString path) { iconPath=path; }
     void setCaption(QString caption) { captionLabel->setText(removeNewLines(caption)); }
     void setDescription(QString description) {descriptionLabel->setText(removeNewLines(description));}
 
@@ -66,31 +121,26 @@ public:
         }
         setPalette(pal);
     }
+
+    void loadIcon(){
+        iconLabel->setPixmap(*getDefaultIcon());
+        loadIndex++;
+        int _loadIndex=loadIndex;
+        QString _iconPath=this->iconPath;
+        QtConcurrent::run([this, _loadIndex, _iconPath](){
+            if(_loadIndex!=this->loadIndex){
+                return;
+            }
+
+            QIcon icon=getIcon(_iconPath);
+            QMetaObject::invokeMethod(this, [this, icon, _loadIndex] {
+                if(_loadIndex==this->loadIndex){
+                    iconLabel->setPixmap(icon.pixmap(PANEL_ICON_WIDTH, PANEL_ICON_HEIGHT));
+                }
+            });
+        });
+    }
 };
-
-QFileIconProvider iconProvider;
-QCache<QString, QIcon> iconsCache(1000);
-
-QIcon getIcon(QString iconPath) {
-  if (iconsCache.contains(iconPath)) {
-    return *iconsCache[iconPath];
-  }
-
-  if (iconPath.startsWith(":")) {
-    // it is resource icon
-    QIcon *icon = new QIcon(iconPath);
-    iconsCache.insert(iconPath, icon);
-    return *icon;
-  }
-  QString fileIconPrefix("fileicon://");
-  if (iconPath.startsWith(fileIconPrefix)) {
-    QString iconPathPart = iconPath.mid(fileIconPrefix.size());
-    QIcon *icon = new QIcon(iconProvider.icon(QFileInfo(iconPathPart)));
-    iconsCache.insert(iconPath, icon);
-    return *icon;
-  }
-  return getIcon(":/icons/res/internet_web_icon.png");
-}
 
 InputDialog::InputDialog(AppGlobals *appGlobals, QWidget *parent,
                          QApplication *application)
@@ -126,10 +176,11 @@ InputDialog::InputDialog(AppGlobals *appGlobals, QWidget *parent,
       ItemPanel*panel=(ItemPanel*)itemPanel;
       panel->setCaption(item.text);
       panel->setDescription(item.smallDescription);
-      panel->setIcon(getIcon(item.icon));
+      panel->setIcon(item.icon);
       panel->setItemIndex(itemIndex);
-
+      panel->loadIcon();
   });
+
   itemsWidget->setSelectionStatusCallback([](QWidget*itemPanel, InputItem&, bool selected) {
       ItemPanel*panel=(ItemPanel*)itemPanel;
       panel->setSelected(selected);
@@ -272,17 +323,19 @@ void InputDialog::select(AbstractMatcher *matcher,
   processMatch();
 }
 
-InputItem InputDialog::selectBlocking(AbstractMatcher*matcher, bool*result){
+InputItem InputDialog::selectBlocking(AbstractMatcher*matcher, bool*result) {
     InputItem resultItem;
     bool res=false;
     select(matcher,[&resultItem, &res](InputItem*item) {
         resultItem=*item;
         res=true;
     });
+
     while(res==false&&visible) {
         QCoreApplication::processEvents();
         QThread::msleep(2);
     }
+    QCoreApplication::processEvents();
     *result=res;
     return resultItem;
 }

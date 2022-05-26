@@ -217,12 +217,13 @@ class PlaySoundWFNodeHandler:public WFNodeHandler {
         }
         return false;
     }
+
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*) override {
         Q_UNUSED(inputPortIndex);
         QString soundPath=configNode->props["sound"].toString();
         PlaceholderExpander expander(appGlobals);
         soundPath=expander.expand(soundPath, &context);
-        if(soundPath.startsWith("bundled://")){
+        if(soundPath.startsWith("bundled://")) {
             soundPath=QString(":/sounds/res/sounds/") + soundPath.mid(QString("bundled://").length());
         }
         QSound::play(soundPath);
@@ -271,7 +272,7 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
         return false;
     }
 
-    void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*plugin) override {
+    void execute(WFExecutionContext&context, int inputPortIndex, WorkflowPlugin*plugin) override {
         Q_UNUSED(inputPortIndex);
         PlaceholderExpander expander(appGlobals);
 
@@ -334,12 +335,12 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
                 process->deleteLater();
             }
         });
-        QObject::connect(process, &QProcess::readyReadStandardOutput, process, [output,process,captureOutput](){
+        QObject::connect(process, &QProcess::readyReadStandardOutput, process, [output,process,captureOutput]() {
             if(captureOutput) {
                 output->append(process->readAllStandardOutput());
             }
         });
-        QObject::connect(process, &QProcess::readyReadStandardError, process, [error,process,captureOutput](){
+        QObject::connect(process, &QProcess::readyReadStandardError, process, [error,process,captureOutput]() {
             if(captureOutput) {
                 error->append(process->readAllStandardError());
             }
@@ -443,7 +444,6 @@ class SelectorWFNodeHandler:public WFNodeHandler {
         }
     }
 };
-
 
 WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appGlobals);
 #endif // WFNODEHANDLERS_H

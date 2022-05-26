@@ -1,5 +1,7 @@
 #include "plugins.h"
 
+#include <QTimer>
+
 void GeneralPlugin::initDefaultConfiguration(AbstractConfig*abstractConfig) {
     GeneralConfiguration*generalConfig= (GeneralConfiguration*)abstractConfig;
     generalConfig->toggleLauncherHotkey="Ctrl+SPACE";
@@ -44,7 +46,11 @@ void GeneralPlugin::toggleMainLauncherWindow() {
     } else {
         compoundMatcher.setMatchers(getDefaultMatchers(appGlobals));
         dialog->select(&compoundMatcher,[](InputItem*item) {
-            item->ownerMatcher->execute(item);
+            InputItem _item=*item;
+            QTimer::singleShot(1, [_item]() {
+              QApplication::processEvents();
+              _item.ownerMatcher->execute((InputItem*)&_item);
+            });
         });
     }
 }

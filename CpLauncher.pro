@@ -1,4 +1,4 @@
-QT += core gui sql svg xml multimedia
+QT += core gui sql svg xml multimedia concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += sdk_no_version_check

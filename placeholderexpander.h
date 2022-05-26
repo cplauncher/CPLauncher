@@ -65,15 +65,13 @@ class PlaceholderExpander {
     QString processPlaceholder_requestInput(QString arg) {
         QString description = arg.isEmpty() ? "Enter placeholder value" : arg;
         TypeTextInputMatcher*matcher=new TypeTextInputMatcher(appGlobals,description);
-        QVariant result;
-        appGlobals->inputDialog->select(matcher,[&result](InputItem*item) {
-            result=item->text;
-        });
-        while(result.isNull()) {
-            QCoreApplication::processEvents();
-            QThread::msleep(2);
+
+        bool inputResult=false;;
+        InputItem r=appGlobals->inputDialog->selectBlocking(matcher, &inputResult);
+        if(inputResult==false) {
+            return QString();
         }
-        return result.toString();
+        return r.text;
     }
 
     QString processPlaceholder_vars(QString arg, WFExecutionContext*context) {

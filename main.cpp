@@ -15,8 +15,6 @@
 
 
 void test() {
-    qDebug()<<"Splitted";
-    qDebug()<<splitCsvLine("``myline``|``some`line``|``123``", "|", "``");
 }
 
 int MAX_LOG_LINES=1000;
