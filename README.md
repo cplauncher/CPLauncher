@@ -7,7 +7,7 @@ but only for **Windows** and **OSX** platform specific functions were implemente
 
 ### Features
 * Run applications and files from specified folders
-* Open links from Chrome/Firefox browsers
+* Open bookmarks from Chrome/Firefox browsers
 * Snippets with placeholders
 * Custom web search
 * Integrated calculator
