@@ -483,9 +483,10 @@ class WebSearchConfigurationTabHandler {
             }
         });
         QObject::connect(ui->wsRemoveButton,&QPushButton::clicked, dialog, [this]() {
-            if(tableHelper->getSelectedRow()!=-1) {
-                tableHelper->remove(tableHelper->getSelectedRow());
-                configuration->searchCollection.removeAt(tableHelper->getSelectedRow());
+            int selectedRow=tableHelper->getSelectedRow();
+            if(selectedRow!=-1) {
+                tableHelper->remove(selectedRow);
+                configuration->searchCollection.removeAt(selectedRow);
                 updateEditableStatus();
                 dialog->modified(CONF_WEB_SEARCH);
             }
