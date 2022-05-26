@@ -7,11 +7,22 @@ but only for **Windows** and **OSX** platform specific functions were implemente
 
 ### Features
 * Run applications and files from specified folders
-* Open links from Chrome/Firefox browsers
+* Open bookmarks from Chrome/Firefox browsers
 * Snippets with placeholders
 * Custom web search
 * Integrated calculator
 * Custom Workflows that allow you to program actions with blocks and arrows 
+
+### Installation
+#### Windows
+* Download the lastest zip release from [Releases](https://github.com/cplauncher/CPLauncher/releases/)
+* Unzip it
+* Install [Visual Studio redistributable X86](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) in case if it is not installed yet. [Direct link](https://aka.ms/vs/17/release/vc_redist.x86.exe)
+* Run
+#### Mac
+* Download the lastest zip release from [Releases](https://github.com/cplauncher/CPLauncher/releases/)
+* Unzip it
+* Run
 
 ### Usage
 After starting the application, you will see the tray icon in tray area. There you will be able to choose **Show Settings**.
