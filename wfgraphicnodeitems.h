@@ -113,7 +113,7 @@ class WFNodeItem:public SvgItem {
 public:
     QList<InputPortItem*>inputs;
     QList<OutputPortItem*>outputs;
-    WFNode*node;
+    WFNode*node=NULL;
     std::function<void(LinkItem*link)>linkCreatedCallback;
     std::function<void(WFNodeItem*nodeItem)>itemMovedCallback;
     WFNodeItem(WFNode*wfNode,

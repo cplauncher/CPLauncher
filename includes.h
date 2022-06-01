@@ -318,6 +318,7 @@ class WFNodeHandler {
     QString description;
   public:
     WFNodeHandler(AppGlobals*appGlobals, WFNode*configNode, QString image) {
+        nodeItem=NULL;
         this->appGlobals=appGlobals;
         this->configNode=configNode;
         this->image=image;
@@ -332,6 +333,8 @@ class WFNodeHandler {
     virtual void execute(WFExecutionContext&context, int portIndex, WorkflowPlugin*plugin) {Q_UNUSED(context);Q_UNUSED(plugin);Q_UNUSED(portIndex)};
     virtual void stop() {}
     virtual bool showConfiguration(QWidget*parent=0) {Q_UNUSED(parent); return false;}
+    virtual void refreshTitleDescription(){}
     void sendToOutput(WorkflowPlugin*plugin, int portIndex, WFExecutionContext&context);
+    virtual void setDefaultConfiguration(){};
 };
 #endif // INCLUDES_H

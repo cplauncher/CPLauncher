@@ -144,7 +144,8 @@ WFNodeItem::WFNodeItem(WFNode*wfNode,
 }
 
 void WFNodeItem::updateAfterSettingsChange() {
-    setText("title",node->handler->getTitle());
+    QString title=node->handler->getTitle();
+    setText("title", title);
     setText("description",node->handler->getDescription());
     update();
 }

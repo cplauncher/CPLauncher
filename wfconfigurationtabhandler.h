@@ -74,18 +74,24 @@ class WorkflowConfigurationTabHandler {
         return action;
     }
 
+    WFNode* setDefaultConfig(WFNode*node) {
+        node->handler->setDefaultConfiguration();
+        node->handler->refreshTitleDescription();
+        return node;
+    }
+
     void createPopupMenu(QMenu*menu,QPointF scenePos) {
         //Add triggers items
         QAction*addKeywordAction=createMenuAction("Keyword", [scenePos, this]() {
-            addNodeItem(addWFNodeAndHandlerByType("keyword"), scenePos);
+            addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("keyword")), scenePos);
             dialogModified();
         });
         QAction*addHotkeyAction=createMenuAction("Hotkey", [scenePos, this]() {
-            addNodeItem(addWFNodeAndHandlerByType("hotkey"), scenePos);
+            addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("hotkey")), scenePos);
             dialogModified();
         });
         QAction*addExternalTriggerAction=createMenuAction("External trigger", [scenePos, this]() {
-            addNodeItem(addWFNodeAndHandlerByType("externalTrigger"), scenePos);
+            addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("externalTrigger")), scenePos);
             dialogModified();
         });
 
@@ -96,29 +102,34 @@ class WorkflowConfigurationTabHandler {
 
         //Add transformers items
         QAction*addExtScriptAction=createMenuAction("External Script", [scenePos, this]() {
-           addNodeItem(addWFNodeAndHandlerByType("extScript"), scenePos);
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("extScript")), scenePos);
            dialogModified();
         });
         QAction*addSelectorAction=createMenuAction("Selector", [scenePos, this]() {
-           addNodeItem(addWFNodeAndHandlerByType("selector"), scenePos);
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("selector")), scenePos);
+           dialogModified();
+        });
+        QAction*copyToClipboardAction=createMenuAction("Copy to clipboard", [scenePos, this]() {
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("copy_clipboard")), scenePos);
            dialogModified();
         });
         QMenu*transformersSubMenu=new QMenu("Transformers");
         transformersSubMenu->addAction(addExtScriptAction);
         transformersSubMenu->addAction(addSelectorAction);
+        transformersSubMenu->addAction(copyToClipboardAction);
 
         //Add actions items
         QAction*addExecAction=createMenuAction("Execute App", [scenePos, this]() {
-           addNodeItem(addWFNodeAndHandlerByType("execapp"), scenePos);
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("execapp")), scenePos);
            dialogModified();
         });
         //Add actions items
         QAction*addNotificationAction=createMenuAction("Notification", [scenePos, this]() {
-           addNodeItem(addWFNodeAndHandlerByType("notification"), scenePos);
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("notification")), scenePos);
            dialogModified();
         });
         QAction*addPlaySoundAction=createMenuAction("Play Sound", [scenePos, this]() {
-           addNodeItem(addWFNodeAndHandlerByType("playSound"), scenePos);
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("playSound")), scenePos);
            dialogModified();
         });
         QMenu*actionsSubMenu=new QMenu("Actions");
@@ -250,6 +261,7 @@ class WorkflowConfigurationTabHandler {
 
     void onWorkflowSelected() {
         scene->clear();
+        view->centerOn(QPointF(0,0));
         updateEditableStatus();
         WFWorkflow*wf=getSelectedWorkflow();
         if(wf==NULL) {
