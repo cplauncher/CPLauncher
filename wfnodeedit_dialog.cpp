@@ -87,6 +87,17 @@ bool WfNodeEditDialog::editScriptingNode(WFNode*node) {
     return false;
 }
 
+bool WfNodeEditDialog::editClipboardCopyNode(WFNode*node) {
+    showPanel(ui->clipboardCopyPanel);
+    setWindowTitle("Edit Clipboard Copy");
+    ui->clipboardCopyTextEdit->setPlainText(node->props.value("content","").toString());
+    if(exec()){
+        node->props["content"]=ui->clipboardCopyTextEdit->toPlainText().trimmed();
+        return true;
+    }
+    return false;
+}
+
 
 bool WfNodeEditDialog::editExecAppNode(WFNode*node) {
     showPanel(ui->execAppPanel);

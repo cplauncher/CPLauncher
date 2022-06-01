@@ -16,18 +16,22 @@ class KeywordWFNodeHandler:public WFNodeHandler {
   public:
     KeywordWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_output.svg") {
-        title="Keyword";
-        description=configNode->props.value("keyword","[not set]").toString();
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editKeywordNode(configNode)) {
-            description=configNode->props.value("keyword","[not set]").toString();
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Keyword";
+        description=configNode->props.value("keyword","[not set]").toString();
     }
 
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*plugin) override {
@@ -40,18 +44,23 @@ class HotkeyWFNodeHandler:public WFNodeHandler {
   public:
     HotkeyWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_output.svg") {
-        title="Hotkey";
-        description=configNode->props.value("hotkey","[not set]").toString();
+        refreshTitleDescription();
     }
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editHotkeyNode(configNode)){
-            description=configNode->props.value("hotkey","[not set]").toString();
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
     }
+
+    void refreshTitleDescription() override {
+        title="Hotkey";
+        description=configNode->props.value("hotkey","[not set]").toString();
+    }
+
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*plugin) override {
         Q_UNUSED(inputPortIndex);
         sendToOutput(plugin, 0,context);
@@ -63,19 +72,24 @@ class ScriptingWFNodeHandler:public WFNodeHandler {
   public:
     ScriptingWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_filter.svg") {
-        title="Script";
-        description=configNode->props.value("description","[not set]").toString();
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editScriptingNode(configNode)) {
-            description=configNode->props.value("description","[not set]").toString();
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
     }
+
+    void refreshTitleDescription() override {
+        title="Script";
+        description=configNode->props.value("description","[not set]").toString();
+    }
+
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*plugin) override {
         Q_UNUSED(inputPortIndex);
         qDebug()<<"scripting workflow node activated";
@@ -88,18 +102,22 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
   public:
     ExecAppActionWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_input.svg") {
-        title="ExecApp";
-        description=lastPathComponent(configNode->props.value("appPath","[not set]").toString());
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editExecAppNode(configNode)) {
-            description=lastPathComponent(configNode->props.value("appPath","[not set]").toString());
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="ExecApp";
+        description=lastPathComponent(configNode->props.value("appPath","[not set]").toString());
     }
 
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*) override {
@@ -118,13 +136,19 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
 
         PlaceholderExpander pe(appGlobals);
         QString appPath=pe.expand(configNode->props.value("appPath","").toString(), &context);
-        QString args=pe.expand(configNode->props.value("args","").toString(), &context);
+        QString args=pe.expand(configNode->props.value("args", "").toString(), &context);
         QString workDir=pe.expand(configNode->props.value("workdir","").toString(), &context);
 
         QVariantMap envMap=configNode->props.value("env").toMap();
 
+        QString expandedApplicationPath=searchProgramInPath(appPath);
+        if(expandedApplicationPath.isNull()) {
+            qWarning()<<"Cannot find application ["<<appPath<<"]";
+            return;
+        }
+
         QProcess*process=new QProcess();
-        process->setProgram(appPath);
+        process->setProgram(expandedApplicationPath);
         if(!args.isEmpty()) {
             process->setArguments(args.split("\n"));
         }
@@ -177,19 +201,29 @@ class NotificationWFNodeHandler:public WFNodeHandler {
   public:
     NotificationWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_input.svg") {
-        title="Notification";
-        description=configNode->props.value("message","[not set]").toString();
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editNotificationNode(configNode)) {
-            description=configNode->props.value("message","[not set]").toString();
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
     }
+
+    void setDefaultConfiguration()override {
+        configNode->props["title"]="Notification";
+        configNode->props["message"]="${input}";
+    }
+
+    void refreshTitleDescription() override {
+        title="Notification";
+        description=configNode->props.value("message","[not set]").toString();
+    }
+
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*) override {
         Q_UNUSED(inputPortIndex);
         QString title=configNode->props["title"].toString();
@@ -204,18 +238,22 @@ class PlaySoundWFNodeHandler:public WFNodeHandler {
   public:
     PlaySoundWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_input.svg") {
-        title="Play sound";
-        description= lastPathComponent(configNode->props.value("sound","[not set]").toString());
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editPlaySoundNode(configNode)) {
-            description=lastPathComponent(configNode->props.value("sound","[not set]").toString());
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Play sound";
+        description= lastPathComponent(configNode->props.value("sound","[not set]").toString());
     }
 
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*) override {
@@ -234,18 +272,22 @@ class ExternalTriggerWFNodeHandler:public WFNodeHandler {
   public:
     ExternalTriggerWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_output.svg") {
-        title="Trigger";
-        description= lastPathComponent(configNode->props.value("triggerId","[not set]").toString());
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editExternalTriggerNode(configNode)) {
-            description=configNode->props.value("triggerId","[not set]").toString();
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Trigger";
+        description= lastPathComponent(configNode->props.value("triggerId","[not set]").toString());
     }
 
     void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*plugin) override {
@@ -254,22 +296,64 @@ class ExternalTriggerWFNodeHandler:public WFNodeHandler {
     }
 };
 
+class CopyToClipboardWFNodeHandler:public WFNodeHandler {
+  public:
+    CopyToClipboardWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
+        :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_transformer.svg") {
+        refreshTitleDescription();
+    }
+
+    bool showConfiguration(QWidget*parent) override {
+        WfNodeEditDialog dialog(parent, appGlobals);
+        if(dialog.editClipboardCopyNode(configNode)) {
+            refreshTitleDescription();
+            nodeItem->updateAfterSettingsChange();
+            return true;
+        }
+        return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Clipboard";
+        description= "copy";
+    }
+
+    void setDefaultConfiguration() override {
+        configNode->props["content"]="${input}";
+    }
+
+    void execute(WFExecutionContext&context,int inputPortIndex, WorkflowPlugin*plugin) override {
+        Q_UNUSED(inputPortIndex);
+
+        QString templateContent=configNode->props["content"].toString();
+        PlaceholderExpander expander(appGlobals);
+        QString data=expander.expand(templateContent, &context);
+        QGuiApplication::clipboard()->setText(data.trimmed());
+        context.variables["input"]=data;
+        sendToOutput(plugin, 0, context);
+    }
+};
+
 class ExternalScriptWFNodeHandler:public WFNodeHandler {
   public:
     ExternalScriptWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_transformer.svg") {
-        title="Ext Script";
-        description = lastPathComponent(configNode->props.value("appPath","[not set]").toString());
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editExternalScriptNode(configNode)) {
-            description=configNode->props.value("appPath","[not set]").toString();
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Ext Script";
+        description = lastPathComponent(configNode->props.value("appPath","[not set]").toString());
     }
 
     void execute(WFExecutionContext&context, int inputPortIndex, WorkflowPlugin*plugin) override {
@@ -303,7 +387,7 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
 
         QString expandedApplicationPath=searchProgramInPath(applicationPath);
         if(expandedApplicationPath.isNull()) {
-            qDebug()<<"Cannot find application "<<applicationPath;
+            qWarning()<<"Cannot find application ["<<applicationPath<<"]";
             return;
         }
 
@@ -356,16 +440,21 @@ class SelectorWFNodeHandler:public WFNodeHandler {
   public:
     SelectorWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
         :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_transformer.svg") {
-        title="Selector";
+        refreshTitleDescription();
     }
 
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
         if(dialog.editSelectorNode(configNode)) {
+            refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
         }
         return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Selector";
     }
 
     QMap<QString, int>createHeaderMap(QString headerLine) {

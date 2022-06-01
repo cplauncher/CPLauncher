@@ -15,6 +15,7 @@ public:
     bool editHotkeyNode(WFNode*node);
     bool editKeywordNode(WFNode*node);
     bool editScriptingNode(WFNode*node);
+    bool editClipboardCopyNode(WFNode*node);
     bool editExecAppNode(WFNode*node);
     bool editNotificationNode(WFNode*node);
     bool editPlaySoundNode(WFNode*node);

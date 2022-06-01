@@ -10,6 +10,9 @@ WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appG
     if(type=="scripting") {
         return new ScriptingWFNodeHandler(appGlobals, wfNode);
     }
+    if(type=="copy_clipboard") {
+        return new CopyToClipboardWFNodeHandler(appGlobals, wfNode);
+    }
     if(type=="execapp") {
         return new ExecAppActionWFNodeHandler(appGlobals, wfNode);
     }
