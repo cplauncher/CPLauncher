@@ -132,8 +132,13 @@ class WorkflowConfigurationTabHandler {
            addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("playSound")), scenePos);
            dialogModified();
         });
+        QAction*addOpenUrlAction=createMenuAction("Open Url", [scenePos, this]() {
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("openUrl")), scenePos);
+           dialogModified();
+        });
         QMenu*actionsSubMenu=new QMenu("Actions");
         actionsSubMenu->addAction(addExecAction);
+        actionsSubMenu->addAction(addOpenUrlAction);
         actionsSubMenu->addAction(addNotificationAction);
         actionsSubMenu->addAction(addPlaySoundAction);
 

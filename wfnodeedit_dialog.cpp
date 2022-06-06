@@ -230,3 +230,16 @@ bool WfNodeEditDialog::editSelectorNode(WFNode*node) {
 
     return false;
 }
+
+
+bool WfNodeEditDialog::editOpenUrlNode(WFNode*node) {
+    showPanel(ui->openUrlPanel);
+    setWindowTitle("Edit Open Url");
+    ui->openUrlEdit->setText(node->props.value("url","").toString());
+    if(exec()) {
+        node->props["url"]=ui->openUrlEdit->text().trimmed();
+        return true;
+    }
+
+    return false;
+}

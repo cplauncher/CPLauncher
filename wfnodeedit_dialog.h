@@ -22,7 +22,7 @@ public:
     bool editExternalTriggerNode(WFNode*node);
     bool editExternalScriptNode(WFNode*node);
     bool editSelectorNode(WFNode*node);
-
+    bool editOpenUrlNode(WFNode*node);
 private:
     void showPanel(QWidget*widget);
     Ui::WfNodeEditDialog *ui;

@@ -38,7 +38,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="hotkeyPanel">
       <property name="sizePolicy">
@@ -347,6 +347,20 @@
        </item>
        <item>
         <widget class="QPlainTextEdit" name="clipboardCopyTextEdit"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="openUrlPanel">
+      <layout class="QFormLayout" name="formLayout_9">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>URL</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="openUrlEdit"/>
        </item>
       </layout>
      </widget>

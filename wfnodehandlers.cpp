@@ -31,6 +31,10 @@ WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appG
     if(type=="selector") {
         return new SelectorWFNodeHandler(appGlobals, wfNode);
     }
+    if(type=="openUrl") {
+        return new OpenUrlWFNodeHandler(appGlobals, wfNode);
+    }
+
     qDebug()<<"Unknown wfhandler type:"<<type;
     return NULL;
 }

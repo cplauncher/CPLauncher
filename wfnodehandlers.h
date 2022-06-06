@@ -3,6 +3,7 @@
 #include <QGraphicsView>
 #include <QProcess>
 #include <QSound>
+#include <QDesktopServices>
 #include "includes.h"
 #include "placeholderexpander.h"
 
@@ -431,6 +432,36 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
         });
 
         process->start();
+    }
+};
+
+class OpenUrlWFNodeHandler:public WFNodeHandler {
+  public:
+    OpenUrlWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
+        :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_input.svg") {
+        refreshTitleDescription();
+    }
+
+    bool showConfiguration(QWidget*parent=0) override {
+        WfNodeEditDialog dialog(parent, appGlobals);
+        if(dialog.editOpenUrlNode(configNode)) {
+            refreshTitleDescription();
+            nodeItem->updateAfterSettingsChange();
+            return true;
+        }
+        return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Open Url";
+        description = lastPathComponent(configNode->props.value("url","[not set]").toString());
+    }
+
+    void execute(WFExecutionContext&context, int inputPortIndex, WorkflowPlugin*plugin) override {
+        Q_UNUSED(inputPortIndex);
+        PlaceholderExpander expander(appGlobals);
+        QString url=expander.expand(configNode->props["url"].toString(), &context);
+        QDesktopServices::openUrl(url);
     }
 };
 
