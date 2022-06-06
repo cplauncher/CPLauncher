@@ -6,6 +6,7 @@
 #include <QSound>
 #include <QMediaPlayer>
 #include <QCommandLineParser>
+#include <QTimer>
 #include "includes.h"
 #include "configurationdialog.h"
 #include "plugins.h"
@@ -23,6 +24,7 @@ QList<QString>logLines;
 AppGlobals*globalAppGlobals;
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    if(msg.contains("qt_sql_default_connection")){return;}
     (*QT_DEFAULT_MESSAGE_HANDLER)(type, context, msg);
     QString fullMessage;
     switch (type) {
@@ -240,6 +242,14 @@ void processPrimarySecondaryCopyStart(SingleApplication*application, AppGlobals*
     }
 }
 
+void refreshByTimer(AppGlobals*appGlobals) {
+    QTimer *timer = new QTimer(appGlobals->application);
+    QObject::connect(timer, &QTimer::timeout, appGlobals->application, [appGlobals](){
+        refreshPlugins(appGlobals);
+    });
+    timer->start(1*60*60*1000);//hour
+}
+
 int main(int argc, char *argv[]) {
     SingleApplication a(argc, argv, true);
     test();
@@ -260,8 +270,8 @@ int main(int argc, char *argv[]) {
     initTrayManager(&appGlobals);
     initPlugins(&appGlobals);
     hotkeyActivatorDeactivator(&appGlobals);
-    //showSettings(&appGlobals);
     a.setQuitOnLastWindowClosed(false);
     installMessageHandler();
+    refreshByTimer(&appGlobals);
     return a.exec();
 }
