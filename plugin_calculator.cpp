@@ -24,7 +24,10 @@ public:
       resultItem.id = "calculator";
       resultItem.icon = ":/icons/res/calculator.png";
       resultItem.keyword = "keyword";
-      resultItem.text = QString::number(result);
+
+      QString resultString = QString::number(result, 'f', 7);
+      resultString.replace(QRegularExpression("\\.?0+$"), "");
+      resultItem.text = resultString;
       resultItem.smallDescription = "Copy to clipboard";
       resultItem.ownerMatcher = this;
       resultItem.executable = true;
