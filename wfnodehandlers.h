@@ -136,25 +136,32 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
         }
 
         PlaceholderExpander pe(appGlobals);
-        QString appPath=pe.expand(configNode->props.value("appPath","").toString(), &context);
-        QString args=pe.expand(configNode->props.value("args", "").toString(), &context);
         QString workDir=pe.expand(configNode->props.value("workdir","").toString(), &context);
 
         QVariantMap envMap=configNode->props.value("env").toMap();
 
-        QString expandedApplicationPath=searchProgramInPath(appPath);
+        QString appPath = configNode->props.value("appPath").toString();
+        appPath = pe.expand(appPath, &context);
+
+        QStringList commandAndArgsList=splitCommandLine(appPath);
+        QString applicationPath;
+        QStringList arguments;
+        if(commandAndArgsList.size()>0) {
+            applicationPath=commandAndArgsList[0];
+            arguments=commandAndArgsList.mid(1);
+        }
+
+        QString expandedApplicationPath=searchProgramInPath(applicationPath);
         if(expandedApplicationPath.isNull()) {
-            qWarning()<<"Cannot find application ["<<appPath<<"]";
+            qWarning()<<"Cannot find application ["<<applicationPath<<"]";
             return;
         }
 
         QProcess*process=new QProcess();
         process->setProgram(expandedApplicationPath);
-        if(!args.isEmpty()) {
-            process->setArguments(args.split("\n"));
-        }
-
-        process->setWorkingDirectory(getWorkingDir(workDir, appPath));
+        process->setArguments(arguments);
+        QString workingDir=getWorkingDir(workDir, expandedApplicationPath);
+        process->setWorkingDirectory(workingDir);
         process->setStandardOutputFile(QProcess::nullDevice());
         process->setStandardErrorFile(QProcess::nullDevice());
         if(!envMap.isEmpty()) {
@@ -171,6 +178,8 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
                     if(code!=0){
                         qWarning()<<"Application finished unexpectedly";
                         qWarning()<<errorString;
+                    }else if(!errorString.isNull()){
+                        qWarning()<<"Application finished with error string: "<<errorString;
                     }
                     appGlobals->launchedProcessesIds.remove(configNodeId);
                     process->deleteLater();

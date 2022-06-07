@@ -102,8 +102,7 @@ bool WfNodeEditDialog::editClipboardCopyNode(WFNode*node) {
 bool WfNodeEditDialog::editExecAppNode(WFNode*node) {
     showPanel(ui->execAppPanel);
     setWindowTitle("Edit Execute Application");
-    ui->execAppAppPathEdit->setText(node->props.value("appPath","").toString());
-    ui->execAppArgsEdit->setPlainText(node->props.value("args","").toString());
+    ui->execAppAppPath->setPlainText(node->props.value("appPath","").toString());
     ui->execAppWorkDirEdit->setText(node->props.value("workdir","").toString());
     ui->execAppDetachedCB->setChecked(node->props.value("detached",true).toBool());
     ui->execAppIfNotRunCB->setChecked(node->props.value("ifnotrun",false).toBool());
@@ -114,8 +113,7 @@ bool WfNodeEditDialog::editExecAppNode(WFNode*node) {
     ui->execAppIfNotRunCB->setEnabled(!ui->execAppDetachedCB->isChecked());
 
     if(exec()){
-        node->props["appPath"]=ui->execAppAppPathEdit->text().trimmed();
-        node->props["args"]=ui->execAppArgsEdit->toPlainText().trimmed();
+        node->props["appPath"]=ui->execAppAppPath->toPlainText().trimmed();
         node->props["workdir"]=ui->execAppWorkDirEdit->text().trimmed();
         node->props["detached"]=ui->execAppDetachedCB->isChecked();
         node->props["ifnotrun"]=ui->execAppIfNotRunCB->isChecked();

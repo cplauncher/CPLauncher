@@ -38,7 +38,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>8</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="hotkeyPanel">
       <property name="sizePolicy">
@@ -222,32 +222,12 @@
        </sizepolicy>
       </property>
       <layout class="QFormLayout" name="formLayout_4">
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>App</string>
          </property>
         </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="execAppAppPathEdit">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>1</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Args</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QTextEdit" name="execAppArgsEdit"/>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_13">
@@ -259,27 +239,17 @@
        <item row="2" column="1">
         <widget class="QPlainTextEdit" name="execAppEnvEdit"/>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_7">
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_14">
          <property name="text">
-          <string>Work Dir</string>
+          <string>If not run</string>
          </property>
         </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="execAppWorkDirEdit"/>
        </item>
        <item row="3" column="1">
         <widget class="QCheckBox" name="execAppIfNotRunCB">
          <property name="text">
           <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>If not run</string>
          </property>
         </widget>
        </item>
@@ -296,6 +266,19 @@
           <string/>
          </property>
         </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Work Dir</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="execAppWorkDirEdit"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPlainTextEdit" name="execAppAppPath"/>
        </item>
       </layout>
      </widget>
