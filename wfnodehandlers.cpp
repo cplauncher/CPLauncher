@@ -34,6 +34,9 @@ WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appG
     if(type=="openUrl") {
         return new OpenUrlWFNodeHandler(appGlobals, wfNode);
     }
+    if(type=="luaScript") {
+        return new LuaScriptWFNodeHandler(appGlobals, wfNode);
+    }
 
     qDebug()<<"Unknown wfhandler type:"<<type;
     return NULL;

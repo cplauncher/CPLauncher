@@ -23,6 +23,8 @@ public:
     bool editExternalScriptNode(WFNode*node);
     bool editSelectorNode(WFNode*node);
     bool editOpenUrlNode(WFNode*node);
+    bool editLuaScriptNode(WFNode*node);
+
 private:
     void showPanel(QWidget*widget);
     Ui::WfNodeEditDialog *ui;

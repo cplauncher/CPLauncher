@@ -1,0 +1,9 @@
+<svg viewBox="0 0 100 53" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs></defs>
+  <path d="M 10 0 L 90 0 L 90 4.456 C 95.523 4.456 100 8.933 100 14.456 C 100 19.979 95.523 24.456 90 24.456 L 90.109 27.457 C 95.621 27.515 100.071 31.969 100.071 37.456 C 100.071 42.7 96.006 47.001 90.835 47.422 L 91 53 L 10 53 L 10 30 C 4.477 30 0 25.523 0 20 C 0 14.477 4.477 10 10 10 L 10 0 Z" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);"></path>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; text-anchor: middle; white-space: pre; font-size: 15px;" x="50" y="14.616" id="title" bx:origin="0.415386 0.5">Title</text>
+  <text style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 10px; white-space: pre; text-anchor: middle;" x="29.841" y="35.932" transform="matrix(1, 0, 0, 1.055556, 19.992073, -3.924764)" id="description" bx:origin="0.5 0.5">Descr</text>
+  <ellipse style="stroke: rgb(0, 0, 0);" cx="6" cy="20" rx="4" ry="4" id="in_0"></ellipse>
+  <ellipse style="stroke: rgb(0, 0, 0);" cx="94" cy="15" rx="4" ry="4" id="out_0"></ellipse>
+  <ellipse style="stroke: rgb(0, 0, 0);" cx="94" cy="38" rx="4" ry="4" id="out_1"></ellipse>
+</svg>

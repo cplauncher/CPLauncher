@@ -214,6 +214,20 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="luaScriptPanel">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Lua script</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="luaScriptSourceEdit"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="execAppPanel">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">

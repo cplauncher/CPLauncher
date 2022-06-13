@@ -21,6 +21,7 @@ SOURCES += \
     hotkeymanager.cpp \
     inputDialog.cpp \
     logdialog.cpp \
+    lua.cpp \
     main.cpp \
     matchcontext.cpp \
     matcher.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
     editwebsearchdialog.h \
     includes.h \
     logdialog.h \
+    lua.h \
     placeholderexpander.h \
     platform.h \
     platform_native.h \

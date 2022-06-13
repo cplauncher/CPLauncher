@@ -67,4 +67,6 @@ Right now the list of blocks accessible in workflow is not very big, but I hope 
 
 *git clone git@github.com:Skycoder42/QHotkey.git CPLauncher/libs/projects/QHotkey*
 
+*git clone git@github.com:edubart/minilua.git CPLauncher/libs/projects/lua/minilua*
+
 * Open in QtCreator and run.

@@ -18,6 +18,7 @@
         <file>res/wf/basic_transformer.svg</file>
         <file>res/wf/basic_input.svg</file>
         <file>res/wf/basic_output.svg</file>
+        <file>res/wf/basic_2_output.svg</file>
     </qresource>
     <qresource prefix="/sounds">
         <file>res/sounds/bell_1.wav</file>

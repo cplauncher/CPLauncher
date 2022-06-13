@@ -105,6 +105,10 @@ class WorkflowConfigurationTabHandler {
            addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("extScript")), scenePos);
            dialogModified();
         });
+        QAction*addLuaScriptAction=createMenuAction("Lua Script", [scenePos, this]() {
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("luaScript")), scenePos);
+           dialogModified();
+        });
         QAction*addSelectorAction=createMenuAction("Selector", [scenePos, this]() {
            addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("selector")), scenePos);
            dialogModified();
@@ -115,6 +119,7 @@ class WorkflowConfigurationTabHandler {
         });
         QMenu*transformersSubMenu=new QMenu("Transformers");
         transformersSubMenu->addAction(addExtScriptAction);
+        transformersSubMenu->addAction(addLuaScriptAction);
         transformersSubMenu->addAction(addSelectorAction);
         transformersSubMenu->addAction(copyToClipboardAction);
 

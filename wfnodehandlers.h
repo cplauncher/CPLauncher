@@ -11,6 +11,7 @@
 #include "wfeditdetails_dialog.h"
 #include "wfnodeedit_dialog.h"
 #include "plugins.h"
+#include "lua.h"
 
 //Triggers
 class KeywordWFNodeHandler:public WFNodeHandler {
@@ -468,6 +469,7 @@ class OpenUrlWFNodeHandler:public WFNodeHandler {
 
     void execute(WFExecutionContext&context, int inputPortIndex, WorkflowPlugin*plugin) override {
         Q_UNUSED(inputPortIndex);
+        Q_UNUSED(plugin);
         PlaceholderExpander expander(appGlobals);
         QString url=expander.expand(configNode->props["url"].toString(), &context);
         QDesktopServices::openUrl(url);
@@ -573,6 +575,38 @@ class SelectorWFNodeHandler:public WFNodeHandler {
         }
     }
 };
+
+class LuaScriptWFNodeHandler:public WFNodeHandler {
+  public:
+    LuaScriptWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
+        :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_2_output.svg") {
+        refreshTitleDescription();
+    }
+
+    bool showConfiguration(QWidget*parent=0) override {
+        WfNodeEditDialog dialog(parent, appGlobals);
+        if(dialog.editLuaScriptNode(configNode)) {
+            refreshTitleDescription();
+            nodeItem->updateAfterSettingsChange();
+            return true;
+        }
+        return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Lua Script";
+    }
+
+    void execute(WFExecutionContext&context, int inputPortIndex, WorkflowPlugin*plugin) override {
+        Q_UNUSED(inputPortIndex);
+        Q_UNUSED(plugin);
+        PlaceholderExpander expander(appGlobals);
+        QString script=expander.expand(configNode->props["luaScript"].toString(), &context);
+        LuaExecutor executor(appGlobals);
+        executor.execute(script, &context, this);
+    }
+};
+
 
 WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appGlobals);
 #endif // WFNODEHANDLERS_H

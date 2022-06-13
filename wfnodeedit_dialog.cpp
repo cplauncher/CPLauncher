@@ -241,3 +241,15 @@ bool WfNodeEditDialog::editOpenUrlNode(WFNode*node) {
 
     return false;
 }
+
+bool WfNodeEditDialog::editLuaScriptNode(WFNode*node) {
+    showPanel(ui->luaScriptPanel);
+    setWindowTitle("Edit Lua Script");
+    ui->luaScriptSourceEdit->setText(node->props.value("luaScript","").toString());
+    if(exec()) {
+        node->props["luaScript"]=ui->luaScriptSourceEdit->toPlainText().trimmed();
+        return true;
+    }
+
+    return false;
+}

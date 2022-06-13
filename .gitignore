@@ -51,5 +51,7 @@ compile_commands.json
 # QtCreator local machine specific files for imported projects
 *creator.user*
 
-libs/projects/
+libs/projects/QHotkey
+libs/projects/SingleApplication
+libs/projects/lua/minilua
 .idea/
