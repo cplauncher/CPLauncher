@@ -56,7 +56,7 @@ With **Workflows** you will be able to configure some sequence of actions that y
 Right now the list of blocks accessible in workflow is not very big, but I hope it will grow.
 
 
-### How to build
+### How to Debug
 *TODO: make the build not depend on QtCreator*
 
 * Clone the repository with:
@@ -70,3 +70,17 @@ Right now the list of blocks accessible in workflow is not very big, but I hope 
 *git clone git@github.com:edubart/minilua.git CPLauncher/libs/projects/lua/minilua*
 
 * Open in QtCreator and run.
+
+### How to build
+
+* Make the all steps from **How to Debug** section
+
+* Make release build in QtCreator
+
+* In terminal navigate to build-CpLauncher*-Release folder
+
+* Set environment variable QT_DIR to your compiler QT folder. For example "d:\Tools\QT\5.15.2\msvc2019" or "C:\QT\5.15.2\mingw81_64"
+
+* Execute script **../CpLauncher/build_windows.bat** or **sh ../CpLauncher/build_osx.sh**
+
+* As a result you will receive CpLauncher folder with all necessary libraries
