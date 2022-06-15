@@ -5,4 +5,5 @@
 bool isExecutable(QString path);
 QString envVariablePathSeparator();
 QString executableExtension();
+QStringList defaultSearchFolders();
 #endif // PLATFORM_H

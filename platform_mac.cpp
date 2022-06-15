@@ -5,7 +5,7 @@
 bool isExecutable(QString path){
     QFileInfo fi(path);
     if(fi.isDir()) {
-        return fi.suffix().toLower()=="app";
+        return fi.suffix().toLower()=="app" || fi.suffix().toLower()=="prefpane";
     }
 
     if(fi.isExecutable()){
@@ -21,4 +21,13 @@ QString envVariablePathSeparator() {
 
 QString executableExtension() {
     return "";
+}
+
+
+QStringList defaultSearchFolders(){
+    QStringList result;
+    result<<"/Applications|";
+    result<<"/System/Applications|";
+    result<<"/System/Library/PreferencePanes|";
+    return result;
 }

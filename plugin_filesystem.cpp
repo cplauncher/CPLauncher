@@ -61,7 +61,33 @@ class FileSystemMatcher:public AbstractMatcher {
     }
 };
 
-void FileSystemPlugin::initDefaultConfiguration(AbstractConfig*) {
+void FileSystemPlugin::initDefaultConfiguration(AbstractConfig*conf) {
+    QStringList searchFolders=defaultSearchFolders();
+    FileSystemConfiguration*fsConf=(FileSystemConfiguration*)conf;
+    foreach(QString folderStringConf, searchFolders){
+        FolderConfig fc;
+        QString folderPath=getBeforeFirstSeparator(folderStringConf,"|").trimmed();
+        QString extensions=getAfterFirstSeparator(folderStringConf,"|").trimmed();
+        QFileInfo folderInfo=QFileInfo(folderPath);
+        if(!folderInfo.exists()){
+            continue;
+        }
+        fc.directory=folderPath;
+        fc.executableIncluded=true;
+        fc.depth=3;
+        if(!extensions.isEmpty()){
+            bool first=true;
+            foreach(QString extension, extensions.split(";")){
+                if(!first){
+                    fc.allowedGlobs.append("\n");
+                }
+                first=false;
+                fc.allowedGlobs.append(extension);
+            }
+        }
+
+        fsConf->folderConfigs.append(fc);
+    }
 }
 
 void FileSystemPlugin::init(AppGlobals*appGlobals) {
