@@ -83,13 +83,14 @@ QStringList splitCommandLine(QString commandLine) {
                 current="";
             }
             continue;
-        } else if(c == '"') {
+        } else if(c == '"' || c == '\'') {
             i++;
+            char quote=c;
             bool escaped=false;
             for(;i<charCount;i++) {
                 QCharRef cr = commandLine[i];
                 char c = cr.toLatin1();
-                if(c=='"' && !escaped) {
+                if(c==quote && !escaped) {
                     splitted.append(current);
                     current="";
                     break;
