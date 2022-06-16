@@ -13,8 +13,6 @@
 #include "browser.h"
 #include "testdialog.h"
 
-
-
 void test() {
 }
 

@@ -127,7 +127,7 @@ class PlaceholderExpander {
         } else if(key=="snippet") {
             return processPlaceholder_snippet(arg, level, context);
         } else if(key=="input") {
-            return processPlaceholder_vars("input", context);
+            return processPlaceholder_requestInput(arg);
         } else if(key=="var") {
             return processPlaceholder_vars(arg, context);
         } else if(context->topLevelVariables.contains(key)){
