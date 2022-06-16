@@ -280,9 +280,13 @@ void InputDialog::onExpand() {
 bool InputDialog::onAccept() {
   if (getSelectedIndex() != -1) {
     InputItem item = matchContext.collectedData[getSelectedIndex()];
-    statisticStorage->addUsage(item.id, matchContext.stringToSearch);
-    hideDialog();
-    onAcceptEvent(&item);
+    if(item.executable){
+        statisticStorage->addUsage(item.id, matchContext.stringToSearch);
+        hideDialog();
+        onAcceptEvent(&item);
+    }else{
+        onExpand();
+    }
     return false;
   }
 
