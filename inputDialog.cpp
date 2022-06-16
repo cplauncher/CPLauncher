@@ -76,6 +76,7 @@ private:
   int loadIndex=0;
   int itemIndex;
   std::function<void(ItemPanel*panel)>onClick;
+  std::function<void(ItemPanel*panel)>onDoubleClick;
 
 protected:
   void mousePressEvent ( QMouseEvent * event ) override {
@@ -83,6 +84,13 @@ protected:
         onClick(this);
     }
     QWidget::mousePressEvent(event);
+  }
+  void mouseDoubleClickEvent( QMouseEvent * e ) override {
+      if ( e->button() == Qt::LeftButton ) {
+          onDoubleClick(this);
+      }
+
+      QWidget::mouseDoubleClickEvent( e );
   }
 
 public:
@@ -106,6 +114,7 @@ public:
     }
 
     void setOnClickEvent(std::function<void(ItemPanel*panel)>onClick) {this->onClick=onClick;}
+    void setOnDoubleClickEvent(std::function<void(ItemPanel*panel)>onClick) {this->onDoubleClick=onClick;}
     void setItemIndex(int index) {itemIndex=index;}
     int getItemIndex() {return itemIndex;}
     void setIcon(QString path) { iconPath=path; }
@@ -168,8 +177,12 @@ InputDialog::InputDialog(AppGlobals *appGlobals, QWidget *parent,
   itemsWidget->setCreateItemPanelCallback([this]() {
       ItemPanel*panel= new ItemPanel(itemsWidget);
       panel->setOnClickEvent([this](ItemPanel*panel) {
-        itemsWidget->setSelectedIndex(panel->getItemIndex());
+          itemsWidget->setSelectedIndex(panel->getItemIndex());
       });
+      panel->setOnDoubleClickEvent([this](ItemPanel*) {
+          onAccept();
+      });
+
       return panel;
   });
   itemsWidget->setInitItemPanelCallback([](QWidget*itemPanel, InputItem&item, int itemIndex) {
