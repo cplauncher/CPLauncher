@@ -9,8 +9,8 @@ const int PANEL_ICON_WIDTH=40;
 const int PANEL_ICON_HEIGHT=PANEL_TOTAL_HEIGHT;
 QPixmap*defaultIcon=NULL;
 
-QString removeNewLines(QString&str){
-    if(str.contains("\n")){
+QString removeNewLines(QString&str) {
+    if(str.contains("\n")) {
         return str.replace("\n"," ");
     }
     return str;
@@ -20,14 +20,14 @@ QFileIconProvider iconProvider;
 QCache<QString, QIcon> iconsCache(1000);
 QMutex getIconMutex;
 
-void insertInIconCache(QString iconPath, QIcon*icon){
+void insertInIconCache(QString iconPath, QIcon*icon) {
   getIconMutex.lock();
   iconsCache.insert(iconPath, icon);
   getIconMutex.unlock();
 }
-QIcon* getFromIconCache(QString iconPath){
+QIcon* getFromIconCache(QString iconPath) {
   getIconMutex.lock();
-  if(!iconsCache.contains(iconPath)){
+  if(!iconsCache.contains(iconPath)) {
       getIconMutex.unlock();
       return NULL;
   }
@@ -58,8 +58,8 @@ QIcon getIcon(QString iconPath) {
   return getIcon(":/icons/res/internet_web_icon.png");
 }
 
-QPixmap*getDefaultIcon(){
-    if(defaultIcon==NULL){
+QPixmap*getDefaultIcon() {
+    if(defaultIcon==NULL) {
         QPixmap*pixmap=new QPixmap(PANEL_ICON_WIDTH, PANEL_ICON_HEIGHT);
         pixmap->fill(Qt::transparent);
         defaultIcon=pixmap;
@@ -122,19 +122,19 @@ public:
         setPalette(pal);
     }
 
-    void loadIcon(){
+    void loadIcon() {
         iconLabel->setPixmap(*getDefaultIcon());
         loadIndex++;
         int _loadIndex=loadIndex;
         QString _iconPath=this->iconPath;
-        QtConcurrent::run([this, _loadIndex, _iconPath](){
-            if(_loadIndex!=this->loadIndex){
+        QtConcurrent::run([this, _loadIndex, _iconPath]() {
+            if(_loadIndex!=this->loadIndex) {
                 return;
             }
 
             QIcon icon=getIcon(_iconPath);
             QMetaObject::invokeMethod(this, [this, icon, _loadIndex] {
-                if(_loadIndex==this->loadIndex){
+                if(_loadIndex==this->loadIndex) {
                     iconLabel->setPixmap(icon.pixmap(PANEL_ICON_WIDTH, PANEL_ICON_HEIGHT));
                 }
             });
@@ -165,9 +165,9 @@ InputDialog::InputDialog(AppGlobals *appGlobals, QWidget *parent,
   itemsWidget=new WidgetPanelList<InputItem>(this);
   itemsWidget->setPaddings(0,0,0,0,5);
   itemsWidget->setMaxItemsToShow(MAX_VISIBLE_ITEMS_COUNT);
-  itemsWidget->setCreateItemPanelCallback([this](){
+  itemsWidget->setCreateItemPanelCallback([this]() {
       ItemPanel*panel= new ItemPanel(itemsWidget);
-      panel->setOnClickEvent([this](ItemPanel*panel){
+      panel->setOnClickEvent([this](ItemPanel*panel) {
         itemsWidget->setSelectedIndex(panel->getItemIndex());
       });
       return panel;
@@ -233,10 +233,10 @@ int InputDialog::getSelectedIndex() {
 }
 
 void InputDialog::setSelectedIndex(int index) {
-    if(index>=itemsWidget->count()){
+    if(index>=itemsWidget->count()) {
         index=itemsWidget->count()-1;
     }
-    if(index<0){
+    if(index<0) {
         index=0;
     }
     itemsWidget->setSelectedIndex(index);
@@ -280,11 +280,11 @@ void InputDialog::onExpand() {
 bool InputDialog::onAccept() {
   if (getSelectedIndex() != -1) {
     InputItem item = matchContext.collectedData[getSelectedIndex()];
-    if(item.executable){
+    if(item.executable) {
         statisticStorage->addUsage(item.id, matchContext.stringToSearch);
         hideDialog();
         onAcceptEvent(&item);
-    }else{
+    } else {
         onExpand();
     }
     return false;

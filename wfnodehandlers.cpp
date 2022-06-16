@@ -42,11 +42,11 @@ WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appG
     return NULL;
 }
 
-void WFNodeHandler::sendToOutput(WorkflowPlugin*plugin,int portIndex, WFExecutionContext&context){
+void WFNodeHandler::sendToOutput(WorkflowPlugin*plugin,int portIndex, WFExecutionContext&context) {
     QString workflowId=context.workflowId;
     QString nodeId=configNode->id;
     WFWorkflow*workflow=appGlobals->configuration->workflowConfiguration.findWorkflow(workflowId);
-    if(workflow==NULL){
+    if(workflow==NULL) {
         qDebug()<<"Cannot find workflow with id: "<<workflowId;
         return;
     }

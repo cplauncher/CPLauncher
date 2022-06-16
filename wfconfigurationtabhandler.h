@@ -49,10 +49,10 @@ class WorkflowConfigurationTabHandler {
         view->setScene(scene);
         view->setDragMode(QGraphicsView::RubberBandDrag);
         scene->setSceneRect(0, 0, 10000, 10000);
-        QObject::connect(ui->wfAddWorkflowButton, &QPushButton::pressed,ui->wfAddWorkflowButton, [this](){addNewWorkflow();});
-        QObject::connect(ui->wfRemoveWorkflowButton, &QPushButton::pressed,ui->wfRemoveWorkflowButton, [this](){removeSelectedWorkflow();});
-        QObject::connect(ui->wfWorkflowsList, &QListWidget::doubleClicked,ui->wfWorkflowsList, [this](){editWorkflowDetails();});
-        QObject::connect(ui->wfWorkflowsList, &QListWidget::itemSelectionChanged,ui->wfWorkflowsList, [this](){onWorkflowSelected();});
+        QObject::connect(ui->wfAddWorkflowButton, &QPushButton::pressed,ui->wfAddWorkflowButton, [this]() {addNewWorkflow();});
+        QObject::connect(ui->wfRemoveWorkflowButton, &QPushButton::pressed,ui->wfRemoveWorkflowButton, [this]() {removeSelectedWorkflow();});
+        QObject::connect(ui->wfWorkflowsList, &QListWidget::doubleClicked,ui->wfWorkflowsList, [this]() {editWorkflowDetails();});
+        QObject::connect(ui->wfWorkflowsList, &QListWidget::itemSelectionChanged,ui->wfWorkflowsList, [this]() {onWorkflowSelected();});
 
         for(int i=0;i<configuration->workflows.size();i++) {
             WFWorkflow*workflow=&configuration->workflows[i];
@@ -260,7 +260,7 @@ class WorkflowConfigurationTabHandler {
 
     bool splitLinkString(QString linkString, int&portIndex, QString&nodeId) {
         int colonIndex=linkString.indexOf(':');
-        if(colonIndex==-1){
+        if(colonIndex==-1) {
             return false;
         }
         QStringList parts=linkString.split(':');
@@ -282,7 +282,7 @@ class WorkflowConfigurationTabHandler {
         for(int i=0;i<nodes.size();i++) {
             WFNode*node=&nodes[i];
             WFNodeHandler*handler=createWFHandlerByType(node->nodeType, node, appGlobals);
-            if(handler==NULL){
+            if(handler==NULL) {
                 qDebug()<<"Unknown node type:"<<node->nodeType;
                 continue;
             }
@@ -393,9 +393,9 @@ class WorkflowConfigurationTabHandler {
     }
 
     WFNodeItem* addNodeItem(WFNode*node, QPointF scenePos) {
-        WFNodeItem*nodeItem=new WFNodeItem(node,[this](LinkItem*link){
+        WFNodeItem*nodeItem=new WFNodeItem(node,[this](LinkItem*link) {
             onLinkCreated(link);
-        },[this](WFNodeItem*item){
+        },[this](WFNodeItem*item) {
             onItemMoved(item);
         });
         nodeItem->setPos(scenePos);
@@ -407,7 +407,7 @@ class WorkflowConfigurationTabHandler {
         return nodeItem;
     }
 
-    void onLinkCreated(LinkItem*link){
+    void onLinkCreated(LinkItem*link) {
         //update configuration with information about the link
         WFWorkflow*workflow=getSelectedWorkflow();
         QString sourceItemId=link->sourcePortItem->owner->node->id;
@@ -420,7 +420,7 @@ class WorkflowConfigurationTabHandler {
         dialogModified();
     }
 
-    void onItemMoved(WFNodeItem*item){
+    void onItemMoved(WFNodeItem*item) {
         QPointF scenePos=item->scenePos();
         item->node->x=scenePos.x();
         item->node->y=scenePos.y();
@@ -456,8 +456,8 @@ class WorkflowConfigurationTabHandler {
 
         for(int i=0; i<items.size(); i++) {
             WFNodeItem*nodeItem=dynamic_cast<WFNodeItem*>(items[i]);
-            if(nodeItem!=NULL){
-                if(nodeItem->node->id==id){
+            if(nodeItem!=NULL) {
+                if(nodeItem->node->id==id) {
                     return nodeItem;
                 }
             }
@@ -468,7 +468,7 @@ class WorkflowConfigurationTabHandler {
     QList<WFNodeItem*>getSelectedNodeItems() {
         QList<WFNodeItem*>result;
         QList<QGraphicsItem*>selected=scene->selectedItems();
-        foreach(QGraphicsItem*item, selected){
+        foreach(QGraphicsItem*item, selected) {
             WFNodeItem*nodeItem = dynamic_cast<WFNodeItem*>(item);
             if(nodeItem!=NULL) {
                 result.append(nodeItem);
@@ -477,11 +477,11 @@ class WorkflowConfigurationTabHandler {
         return result;
     }
 
-    void showSelectedNodeProperties(){
+    void showSelectedNodeProperties() {
         if(!scene->selectedItems().isEmpty()) {
             QList<WFNodeItem*>selected=getSelectedNodeItems();
             WFNodeItem*nodeItem= selected.first();
-            if(nodeItem->node->handler->showConfiguration(view)){
+            if(nodeItem->node->handler->showConfiguration(view)) {
                 nodeItem->updateAfterSettingsChange();
                 dialogModified();
             }
@@ -534,9 +534,9 @@ class WorkflowConfigurationTabHandler {
 
     void deleteWFNode(WFNodeItem*wfNode) {
         QList<WFNode>&workflowNodes = getSelectedWorkflow()->nodes;
-        for(int i=0;i<workflowNodes.size();i++){
+        for(int i=0;i<workflowNodes.size();i++) {
             WFNode*n=&workflowNodes[i];
-            if(n==wfNode->node){
+            if(n==wfNode->node) {
                 workflowNodes.takeAt(i);
                 break;
             }
@@ -568,7 +568,7 @@ class WorkflowConfigurationTabHandler {
         bool workflowSelected=getSelectedWorkflow()!=NULL;
         ui->wfScene->setEnabled(workflowSelected);
         ui->wfRemoveWorkflowButton->setEnabled(workflowSelected);
-        if(!workflowSelected){
+        if(!workflowSelected) {
             scene->clear();
         }
     }

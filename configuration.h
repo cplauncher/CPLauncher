@@ -341,7 +341,7 @@ class WFWorkflow {
             links[sourceNodeId]=resultList;
         }
     }
-    WFNode*findNodeById(QString nodeId){
+    WFNode*findNodeById(QString nodeId) {
         for(int i=0;i<nodes.size();i++) {
             WFNode*node=&nodes[i];
             if(node->id==nodeId) {
@@ -379,8 +379,8 @@ class WorkflowConfiguration:public AbstractConfig {
             workflows.append(workflow);
         }
     }
-    WFWorkflow*findWorkflow(QString workflowId){
-        for(int i=0;i<workflows.size();i++){
+    WFWorkflow*findWorkflow(QString workflowId) {
+        for(int i=0;i<workflows.size();i++) {
             WFWorkflow*workflow=&workflows[i];
             if(workflow->workflowId==workflowId) {
                 return workflow;

@@ -76,7 +76,7 @@ void ListInputMatcher::match(MatchContext*matchContext) {
         if (defaultMatch(matchContext, item.keyword, false)) {
             matchContext->collectedData.append(item);
             count++;
-            if(count>50){
+            if(count>50) {
                 break;
             }
         }

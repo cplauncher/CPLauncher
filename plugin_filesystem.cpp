@@ -64,21 +64,21 @@ class FileSystemMatcher:public AbstractMatcher {
 void FileSystemPlugin::initDefaultConfiguration(AbstractConfig*conf) {
     QStringList searchFolders=defaultSearchFolders();
     FileSystemConfiguration*fsConf=(FileSystemConfiguration*)conf;
-    foreach(QString folderStringConf, searchFolders){
+    foreach(QString folderStringConf, searchFolders) {
         FolderConfig fc;
         QString folderPath=getBeforeFirstSeparator(folderStringConf,"|").trimmed();
         QString extensions=getAfterFirstSeparator(folderStringConf,"|").trimmed();
         QFileInfo folderInfo=QFileInfo(folderPath);
-        if(!folderInfo.exists()){
+        if(!folderInfo.exists()) {
             continue;
         }
         fc.directory=folderPath;
         fc.executableIncluded=true;
         fc.depth=3;
-        if(!extensions.isEmpty()){
+        if(!extensions.isEmpty()) {
             bool first=true;
-            foreach(QString extension, extensions.split(";")){
-                if(!first){
+            foreach(QString extension, extensions.split(";")) {
+                if(!first) {
                     fc.allowedGlobs.append("\n");
                 }
                 first=false;

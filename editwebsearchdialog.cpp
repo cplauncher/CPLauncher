@@ -35,7 +35,7 @@ bool EditWebSearchDialog::editWebSearch(QVariantMapWithCheck&result, QString url
     ui->keywordLineEdit->setText(keyword);
     ui->titleLineEdit->setText(title);
     result.clear();
-    if(exec()){
+    if(exec()) {
         result["url"]=ui->urlLineEdit->text().trimmed();
         result["keyword"]=ui->keywordLineEdit->text().trimmed();
         result["title"]=ui->titleLineEdit->text().trimmed();

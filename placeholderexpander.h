@@ -13,7 +13,7 @@ class PlaceholderExpander {
         this->appGlobals=appGlobals;
     }
 
-    bool containsPlaceholder(QString line){
+    bool containsPlaceholder(QString line) {
         return line.contains(QRegularExpression(pattern));
     }
 
@@ -130,7 +130,7 @@ class PlaceholderExpander {
             return processPlaceholder_requestInput(arg);
         } else if(key=="var") {
             return processPlaceholder_vars(arg, context);
-        } else if(context->topLevelVariables.contains(key)){
+        } else if(context->topLevelVariables.contains(key)) {
             return processPlaceholder_topLevelVar(key, arg, context);
         } else {
             return QString("Unknown placeholder [%1]").arg(key);

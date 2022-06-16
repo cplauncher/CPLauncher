@@ -17,7 +17,7 @@ public:
     explicit LogDialog(QWidget *parent = nullptr);
     ~LogDialog();
     void addLog(QString string);
-    void setMaxLinesCount(int maxLines){
+    void setMaxLinesCount(int maxLines) {
         this->maxLines=maxLines;
     }
     void initLogs(QList<QString>&logLines);

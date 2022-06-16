@@ -13,19 +13,19 @@ LogDialog::LogDialog(QWidget *parent) :
     ui->logEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     ui->logEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     cursor = new QTextCursor(ui->logEdit->document());
-    connect(ui->closeButton, &QPushButton::pressed, this, [this](){
+    connect(ui->closeButton, &QPushButton::pressed, this, [this]() {
         //qDebug()<<"hello world "<<counter;
         //counter++;
         close();
     });
 }
 
-LogDialog::~LogDialog(){
+LogDialog::~LogDialog() {
     delete ui;
 }
 
-void LogDialog::initLogs(QList<QString>&logLines){
-    foreach(const QString&line, logLines){
+void LogDialog::initLogs(QList<QString>&logLines) {
+    foreach(const QString&line, logLines) {
         addLog(line);
     }
     ui->logEdit->horizontalScrollBar()->setValue(0);

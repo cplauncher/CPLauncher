@@ -261,38 +261,38 @@ class TrayManager {
 };
 
 class QVariantMapWithCheck:public QVariantMap{
-    void checkExists(QString key){
-        if(!contains(key)){
+    void checkExists(QString key) {
+        if(!contains(key)) {
             qDebug()<<"Cannot find key "<<key;
         }
     }
   public:
-    QString getString(QString key){
+    QString getString(QString key) {
         checkExists(key);
         return (*this)[key].toString();
     }
-    QString getString(QString key, QString defaultValue){
+    QString getString(QString key, QString defaultValue) {
         if(!contains(key)) {
             return defaultValue;
         }
         return (*this)[key].toString();
     }
-    int getInt(QString key){
+    int getInt(QString key) {
         checkExists(key);
         return (*this)[key].toInt();
     }
-    int getInt(QString key, int defaultValue){
-        if(!contains(key)) {
-            return defaultValue;
-        }
-        return (*this)[key].toInt();
+    int getInt(QString key, int defaultValue) {
+      if (!contains(key)) {
+        return defaultValue;
+      }
+      return (*this)[key].toInt();
     }
 
-    float getFloat(QString key){
+    float getFloat(QString key) {
         checkExists(key);
         return (*this)[key].toFloat();
     }
-    float getFloat(QString key, float defaultValue){
+    float getFloat(QString key, float defaultValue) {
         if(!contains(key)) {
             return defaultValue;
         }
@@ -329,12 +329,12 @@ class WFNodeHandler {
     QString getImage() {return image;}
     QString getTitle() {return title;}
     QString getDescription() {return description;}
-    void setDescription(QString descr){ this->description=descr;}
+    void setDescription(QString descr) { this->description=descr;}
     virtual void execute(WFExecutionContext&context, int portIndex, WorkflowPlugin*plugin) {Q_UNUSED(context);Q_UNUSED(plugin);Q_UNUSED(portIndex)};
     virtual void stop() {}
     virtual bool showConfiguration(QWidget*parent=0) {Q_UNUSED(parent); return false;}
-    virtual void refreshTitleDescription(){}
+    virtual void refreshTitleDescription() {}
     void sendToOutput(WorkflowPlugin*plugin, int portIndex, WFExecutionContext&context);
-    virtual void setDefaultConfiguration(){};
+    virtual void setDefaultConfiguration() {};
 };
 #endif // INCLUDES_H

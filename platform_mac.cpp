@@ -2,13 +2,13 @@
 #include "platform.h"
 
 
-bool isExecutable(QString path){
+bool isExecutable(QString path) {
     QFileInfo fi(path);
     if(fi.isDir()) {
         return fi.suffix().toLower()=="app" || fi.suffix().toLower()=="prefpane";
     }
 
-    if(fi.isExecutable()){
+    if(fi.isExecutable()) {
         return true;
     }
 
@@ -24,7 +24,7 @@ QString executableExtension() {
 }
 
 
-QStringList defaultSearchFolders(){
+QStringList defaultSearchFolders() {
     QStringList result;
     result<<"/Applications|";
     result<<"/System/Applications|";

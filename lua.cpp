@@ -55,7 +55,7 @@ int output(lua_State *state) {
 int input(lua_State *state) {
     WFExecutionContext*executionContext = (WFExecutionContext*)getUserDataFromGlobalVar(state, "executionContext");
     QString input="";
-    if(executionContext->variables.contains("input")){
+    if(executionContext->variables.contains("input")) {
         input=executionContext->variables["input"].toString();
     }
 
@@ -88,7 +88,7 @@ void LuaExecutor::execute(QString luaScript, WFExecutionContext*executionContext
     QByteArray utf8 = luaScript.toUtf8();
     const char *data = utf8.constData();
     int result=luaL_dostring(state, data);
-    if(result!=LUA_OK){
+    if(result!=LUA_OK) {
         const char*result=lua_tostring(state, 1);
         QString errorMessage=QString(result);
         qDebug()<<"Lua Script error: "<<errorMessage;

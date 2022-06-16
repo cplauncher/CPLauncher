@@ -50,7 +50,7 @@ class HotkeyWFNodeHandler:public WFNodeHandler {
     }
     bool showConfiguration(QWidget*parent=0) override {
         WfNodeEditDialog dialog(parent, appGlobals);
-        if(dialog.editHotkeyNode(configNode)){
+        if(dialog.editHotkeyNode(configNode)) {
             refreshTitleDescription();
             nodeItem->updateAfterSettingsChange();
             return true;
@@ -176,10 +176,10 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
                 if(state==QProcess::NotRunning) {
                     int code=process->exitCode();
                     QString errorString=process->errorString();
-                    if(code!=0){
+                    if(code!=0) {
                         qWarning()<<"Application finished unexpectedly";
                         qWarning()<<errorString;
-                    }else if(!errorString.isNull()){
+                    }else if(!errorString.isNull()) {
                         qWarning()<<"Application finished with error string: "<<errorString;
                     }
                     appGlobals->launchedProcessesIds.remove(configNodeId);
@@ -200,8 +200,8 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
         return env;
     }
 
-    QString getWorkingDir(QString workDir, QString appPath){
-        if(!workDir.isEmpty()){
+    QString getWorkingDir(QString workDir, QString appPath) {
+        if(!workDir.isEmpty()) {
             return workDir;
         }
         return QFileInfo(appPath).absoluteDir().absolutePath();
@@ -408,7 +408,7 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
         process->setEnvironment(QStringList()<<"PYTHONIOENCODING=utf-8");
         QString*output=new QString();
         QString*error=new QString();
-        QObject::connect(process, &QProcess::stateChanged, process, [this, plugin, output,error, process, context](QProcess::ProcessState state){
+        QObject::connect(process, &QProcess::stateChanged, process, [this, plugin, output,error, process, context](QProcess::ProcessState state) {
             if(state==QProcess::NotRunning) {
                 int code=process->exitCode();
                 qDebug()<<"script finished with exit code "<<code;
@@ -420,7 +420,7 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
                     sendToOutput(plugin, 0, contextCopy);
                 } else {
                     qWarning()<<"Application finished with error";
-                    if(error->length()>0){
+                    if(error->length()>0) {
                         qWarning()<<"Error:"<<*error;
                     }
                     delete output;

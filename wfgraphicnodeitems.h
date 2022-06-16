@@ -66,7 +66,7 @@ public:
         this->index = index;
         owner=parent;
     }
-    int getIndex(){return index;}
+    int getIndex() {return index;}
 
     void removeLink(LinkItem*link) {
         inputLinks.removeAll(link);
@@ -87,7 +87,7 @@ public:
     QList<LinkItem*>outputLinks;
 
     OutputPortItem(qreal x, qreal y, qreal w, qreal h, int index, WFNodeItem *parent = nullptr);
-    int getIndex(){ return index; }
+    int getIndex() { return index; }
     void removeLink(LinkItem*link);
     void createLink(InputPortItem*inputNode, bool fireCallback);
 protected:

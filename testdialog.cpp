@@ -2,7 +2,7 @@
 
 #include "ui_testdialog.h"
 
-Person createRandomPerson(int i){
+Person createRandomPerson(int i) {
     QStringList names;
     names<<"Ivan"<<"Dmitry"<<"Alexander"<<"Maria"<<"Irina"<<"Jane"<<"Greg"<<"John"<<"Bill"<<"Tom"<<"Tim"<<"Julia"<<"Ann"<<"Gloria"<<"Mike"<<"Olga";
     Person p;
@@ -17,7 +17,7 @@ TestDialog::TestDialog(QWidget *parent) :
 {
     setWindowFlags(Qt::WindowStaysOnTopHint);
     ui->setupUi(this);
-    ui->listWidget->setCreateItemPanelCallback([this](){
+    ui->listWidget->setCreateItemPanelCallback([this]() {
         InputPanel*ip= new InputPanel(ui->listWidget);
         ip->setAutoFillBackground(true);
         QPalette palette;
@@ -25,49 +25,49 @@ TestDialog::TestDialog(QWidget *parent) :
         ip->setPalette(palette);
         return ip;
     });
-    ui->listWidget->setInitItemPanelCallback([](QWidget*itemPanel, Person&object, int index){
+    ui->listWidget->setInitItemPanelCallback([](QWidget*itemPanel, Person&object, int index) {
        InputPanel*panel=(InputPanel*)itemPanel;
        panel->age->setText(QString::number(object.age));
        panel->name->setText(object.name);
        panel->index=index;
     });
-    ui->listWidget->setSelectionStatusCallback([](QWidget*itemPanel, Person&, bool selected){
+    ui->listWidget->setSelectionStatusCallback([](QWidget*itemPanel, Person&, bool selected) {
         QPalette palette;
-        if(selected){
+        if(selected) {
             palette.setColor(QPalette::Background, Qt::blue);
-        }else{
+        } else {
             palette.setColor(QPalette::Background, Qt::yellow);
         }
 
         itemPanel->setPalette(palette);
     });
     ui->listWidget->init();
-    connect(ui->itemsCountEdit, &QLineEdit::returnPressed, this, [this](){
+    connect(ui->itemsCountEdit, &QLineEdit::returnPressed, this, [this]() {
         int count=ui->itemsCountEdit->text().trimmed().toInt();
         QList<Person>list;
-        for(int i=0;i<count;i++){
+        for(int i=0;i<count;i++) {
             Person p=createRandomPerson(i);
             list.append(p);
         }
         ui->listWidget->setItems(list);
         updateData();
     });
-    connect(ui->selectedEdit, &QLineEdit::returnPressed, this, [this](){
+    connect(ui->selectedEdit, &QLineEdit::returnPressed, this, [this]() {
         int selected=ui->selectedEdit->text().trimmed().toInt();
         ui->listWidget->setSelectedIndex(selected);
         updateData();
     });
-    connect(ui->topEdit, &QLineEdit::returnPressed, this, [this](){
+    connect(ui->topEdit, &QLineEdit::returnPressed, this, [this]() {
         int top=ui->topEdit->text().trimmed().toInt();
         ui->listWidget->setTopIndex(top);
         updateData();
     });
-    connect(ui->ensVisibleEdit, &QLineEdit::returnPressed, this, [this](){
+    connect(ui->ensVisibleEdit, &QLineEdit::returnPressed, this, [this]() {
         int index=ui->ensVisibleEdit->text().trimmed().toInt();
         ui->listWidget->ensureIndexVisible(index);
         updateData();
     });
-    connect(ui->addButton, &QPushButton::pressed, this, [this](){
+    connect(ui->addButton, &QPushButton::pressed, this, [this]() {
         int count=ui->listWidget->count()-1;
         ui->listWidget->addItem(createRandomPerson(count+1));
         updateData();
@@ -75,13 +75,12 @@ TestDialog::TestDialog(QWidget *parent) :
     updateData();
 }
 
-void TestDialog::updateData(){
+void TestDialog::updateData() {
     ui->itemsCountEdit->setText(QString::number(ui->listWidget->count()));
     ui->topEdit->setText(QString::number(ui->listWidget->getTopIndex()));
     ui->selectedEdit->setText(QString::number(ui->listWidget->getSelectedIndex()));
 }
 
-TestDialog::~TestDialog()
-{
+TestDialog::~TestDialog() {
     delete ui;
 }

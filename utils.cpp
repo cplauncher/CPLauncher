@@ -112,7 +112,7 @@ QStringList splitCommandLine(QString commandLine) {
     return splitted;
 }
 
-QString checkExecutableFileExists(QString path){
+QString checkExecutableFileExists(QString path) {
     QFileInfo file(path);
     if(file.exists()) {
         return file.absoluteFilePath();
@@ -132,11 +132,11 @@ QString searchProgramInPath(QString programPath) {
     }
 
     //this is full path like /mydir/mydir, but full path we already checked in previous statement
-    if(programPath.startsWith('/')){
+    if(programPath.startsWith('/')) {
         return QString();
     }
     //it is something like C: - also root path
-    if(getBeforeFirstSeparator(programPath, "/").contains(":")){
+    if(getBeforeFirstSeparator(programPath, "/").contains(":")) {
         return QString();
     }
 
@@ -158,11 +158,11 @@ QString searchProgramInPath(QString programPath) {
     return QString();
 }
 int skipWhiteSpaces(QString&str, int pos) {
-    while(pos<str.length()){
+    while(pos<str.length()) {
         QCharRef c=str[pos];
-        if(c.isSpace()){
+        if(c.isSpace()) {
             pos++;
-        }else{
+        } else {
             break;
         }
     }
@@ -175,12 +175,12 @@ QStringList splitCsvLine(QString string, QString separator, QString quote) {
     for(int i=0; i<1000; i++) {
         int position=skipWhiteSpaces(currentLine, 0);
         currentLine=currentLine.mid(position);
-        if(currentLine.isEmpty()){
+        if(currentLine.isEmpty()) {
             break;
         }
 
         if(!result.isEmpty()) {
-            if(!currentLine.startsWith(separator)){
+            if(!currentLine.startsWith(separator)) {
                 qDebug()<<"Expected separator ["<<separator<<"] between CSV field, but not found ["<<string<<"]";
                 break;
             }
@@ -189,7 +189,7 @@ QStringList splitCsvLine(QString string, QString separator, QString quote) {
             currentLine=currentLine.mid(position);
         }
 
-        if(!currentLine.startsWith(quote)){
+        if(!currentLine.startsWith(quote)) {
             qDebug()<<"Cannot find start quote while parse CSV line ["<<string<<"]";
             break;
         }

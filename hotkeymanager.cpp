@@ -49,8 +49,8 @@ void HotkeyManager::deactivateHotkey(QString hotkeyId) {
         hotkey->setRegistered(false);
     }
 }
-void HotkeyManager::enable(bool value){
-    foreach(QString hotkeyId, id2HotkeyMap.keys()){
+void HotkeyManager::enable(bool value) {
+    foreach(QString hotkeyId, id2HotkeyMap.keys()) {
         QHotkey*hotkey=id2HotkeyMap[hotkeyId];
         hotkey->setRegistered(value);
     }

@@ -22,7 +22,7 @@ QList<QString>logLines;
 AppGlobals*globalAppGlobals;
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
-    if(msg.contains("qt_sql_default_connection")){return;}
+    if(msg.contains("qt_sql_default_connection")) {return;}
     (*QT_DEFAULT_MESSAGE_HANDLER)(type, context, msg);
     QString fullMessage;
     switch (type) {
@@ -42,10 +42,10 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         fullMessage="[FATL] "+msg;
     }
     logLines.append(fullMessage);
-    if(logLines.count()>MAX_LOG_LINES){
+    if(logLines.count()>MAX_LOG_LINES) {
         logLines.removeAt(0);
     }
-    if(globalAppGlobals->logDialog!=NULL){
+    if(globalAppGlobals->logDialog!=NULL) {
         globalAppGlobals->logDialog->addLog(fullMessage);
     }
 }
@@ -55,7 +55,7 @@ void installMessageHandler() {
     qInstallMessageHandler(myMessageOutput);
 }
 
-void showLogsWindow(AppGlobals*appGlobals){
+void showLogsWindow(AppGlobals*appGlobals) {
     if(appGlobals->logDialog!=NULL) {
         activateApp();
         appGlobals->logDialog->show();
@@ -64,7 +64,7 @@ void showLogsWindow(AppGlobals*appGlobals){
         return;
     }
     LogDialog*logDialog=new LogDialog();
-    QObject::connect(logDialog, &QDialog::finished, logDialog, [appGlobals](){
+    QObject::connect(logDialog, &QDialog::finished, logDialog, [appGlobals]() {
         appGlobals->logDialog=NULL;
     });
     logDialog->initLogs(logLines);
@@ -90,7 +90,7 @@ void showSettings(AppGlobals*appGlobals) {
     QObject::connect(configurationDialog, &ConfigurationDialog::configurationSaved, configurationDialog, [appGlobals](QStringList changedConfigurations) {
         qDebug()<<"Changed configurations: "<<changedConfigurations;
         appGlobals->configuration->load(appGlobals);
-        foreach(QString pluginId,changedConfigurations){
+        foreach(QString pluginId,changedConfigurations) {
             AbstractPlugin*plugin=appGlobals->plugins[pluginId];
             plugin->refresh();
         }
@@ -104,7 +104,7 @@ void showSettings(AppGlobals*appGlobals) {
 }
 
 void hotkeyActivatorDeactivator(AppGlobals*appGlobals) {
-    appGlobals->application->connect(appGlobals->application, &QApplication::focusChanged, appGlobals->application, [appGlobals](QWidget *oldWidget, QWidget *newWidget){
+    appGlobals->application->connect(appGlobals->application, &QApplication::focusChanged, appGlobals->application, [appGlobals](QWidget *oldWidget, QWidget *newWidget) {
         if(newWidget!=NULL && QString("CustomHotkeyEditor") == newWidget->metaObject()->className()) {
             appGlobals->hotkeyManager->enable(false);
         }
@@ -114,7 +114,7 @@ void hotkeyActivatorDeactivator(AppGlobals*appGlobals) {
     });
 }
 
-void loadPlugins(AppGlobals*appGlobals){
+void loadPlugins(AppGlobals*appGlobals) {
     auto&plugins=appGlobals->plugins;
     plugins[CONF_GENERAL]= new GeneralPlugin();
     plugins[CONF_WEB_SEARCH]= new WebSearchPlugin();
@@ -134,8 +134,8 @@ void initPlugins(AppGlobals*appGlobals) {
     }
 }
 
-void refreshPlugins(AppGlobals*appGlobals){
-    foreach(QString pluginId,appGlobals->plugins.keys()){
+void refreshPlugins(AppGlobals*appGlobals) {
+    foreach(QString pluginId,appGlobals->plugins.keys()) {
         AbstractPlugin*plugin=appGlobals->plugins[pluginId];
         plugin->refresh();
     }
@@ -172,7 +172,7 @@ void initHotkeyManager(AppGlobals*appGlobals) {
 
 void runWorkflowByTrigger(AppGlobals*appGlobals, QString triggerId) {
     WorkflowPlugin*workflowPlugin=(WorkflowPlugin*)appGlobals->plugins[CONF_WORKFLOW];
-    if(workflowPlugin->externalTriggers.contains(triggerId)){
+    if(workflowPlugin->externalTriggers.contains(triggerId)) {
         QList<WFNodeIdentifier>nodes=workflowPlugin->externalTriggers.values(triggerId);
 
         for(int i=0;i<nodes.size();i++) {
@@ -188,7 +188,7 @@ void runWorkflowByTrigger(AppGlobals*appGlobals, QString triggerId) {
 void receivedMessageFromSecondCopy(AppGlobals*appGlobals, QString data) {
     QJsonDocument jsonDoc=QJsonDocument::fromJson(data.toUtf8());
     QJsonObject jsonConfig=jsonDoc.object();
-    if(!jsonConfig.contains("type")){
+    if(!jsonConfig.contains("type")) {
         qWarning()<<"Received message from second app copy, but it does not have 'type' field";
         return;
     }
@@ -222,8 +222,8 @@ void processPrimarySecondaryCopyStart(SingleApplication*application, AppGlobals*
         QStringList arguments=application->arguments();
         for(int i=1;i<arguments.size();i++) {
             QString arg=arguments[i];
-            if(arg=="-t" || arg=="--trigger"){
-                if(i+1>=arguments.size()){
+            if(arg=="-t" || arg=="--trigger") {
+                if(i+1>=arguments.size()) {
                     qDebug()<<"argument --trigger {ID} expects trigger id";
                     exit(1);
                 }
@@ -242,7 +242,7 @@ void processPrimarySecondaryCopyStart(SingleApplication*application, AppGlobals*
 
 void refreshByTimer(AppGlobals*appGlobals) {
     QTimer *timer = new QTimer(appGlobals->application);
-    QObject::connect(timer, &QTimer::timeout, appGlobals->application, [appGlobals](){
+    QObject::connect(timer, &QTimer::timeout, appGlobals->application, [appGlobals]() {
         refreshPlugins(appGlobals);
     });
     timer->start(1*60*60*1000);//hour

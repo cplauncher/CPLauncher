@@ -8,7 +8,7 @@
 QString envVariablesToString(QMap<QString, QVariant>envVariablesMap) {
     QString str;
     foreach(QString key, envVariablesMap.keys()) {
-        if(!str.isEmpty()){
+        if(!str.isEmpty()) {
             str+="\n";
         }
         str+=key+"="+envVariablesMap[key].toString();
@@ -23,7 +23,7 @@ QMap<QString, QVariant> stringToEnvVariablesMap(QString envVariablesString) {
         str=str.trimmed();
         QString varName=getBeforeFirstSeparator(str, "=").trimmed();
         QString varValue=getAfterFirstSeparator(str, "=").trimmed();
-        if(!varName.isNull()){
+        if(!varName.isNull()) {
             result[varName]=varValue;
         }
     }
@@ -34,8 +34,8 @@ WfNodeEditDialog::WfNodeEditDialog(QWidget *parent, AppGlobals*appGlobals) : QDi
     ui->setupUi(this);
     this->appGlobals=appGlobals;
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    connect(ui->okButton, &QPushButton::pressed, this, [this](){ accept();});
-    connect(ui->cancelButton, &QPushButton::pressed, this, [this](){ reject();});
+    connect(ui->okButton, &QPushButton::pressed, this, [this]() { accept();});
+    connect(ui->cancelButton, &QPushButton::pressed, this, [this]() { reject();});
 }
 
 WfNodeEditDialog::~WfNodeEditDialog() {
@@ -50,7 +50,7 @@ bool WfNodeEditDialog::editHotkeyNode(WFNode*node) {
     showPanel(ui->hotkeyPanel);
     setWindowTitle("Edit Hotkey");
     ui->hotkeyHotkeyEdit->setKeySequence(node->props.value("hotkey","").toString());
-    if(exec()){
+    if(exec()) {
         node->props["hotkey"]=ui->hotkeyHotkeyEdit->keySequence().toString();
         return true;
     }
@@ -78,7 +78,7 @@ bool WfNodeEditDialog::editScriptingNode(WFNode*node) {
     ui->scriptingPathEdit->setText(node->props.value("appPath","").toString());
     ui->scriptingDescriptionEdit->setText(node->props.value("description","").toString());
     ui->scriptingScriptEdit->setPlainText(node->props.value("script","").toString());
-    if(exec()){
+    if(exec()) {
         node->props["appPath"]=ui->scriptingPathEdit->text().trimmed();
         node->props["description"]=ui->scriptingDescriptionEdit->text().trimmed();
         node->props["script"]=ui->scriptingScriptEdit->toPlainText().trimmed();
@@ -91,7 +91,7 @@ bool WfNodeEditDialog::editClipboardCopyNode(WFNode*node) {
     showPanel(ui->clipboardCopyPanel);
     setWindowTitle("Edit Clipboard Copy");
     ui->clipboardCopyTextEdit->setPlainText(node->props.value("content","").toString());
-    if(exec()){
+    if(exec()) {
         node->props["content"]=ui->clipboardCopyTextEdit->toPlainText().trimmed();
         return true;
     }
@@ -112,7 +112,7 @@ bool WfNodeEditDialog::editExecAppNode(WFNode*node) {
     });
     ui->execAppIfNotRunCB->setEnabled(!ui->execAppDetachedCB->isChecked());
 
-    if(exec()){
+    if(exec()) {
         node->props["appPath"]=ui->execAppAppPath->toPlainText().trimmed();
         node->props["workdir"]=ui->execAppWorkDirEdit->text().trimmed();
         node->props["detached"]=ui->execAppDetachedCB->isChecked();
@@ -128,7 +128,7 @@ bool WfNodeEditDialog::editNotificationNode(WFNode*node) {
     setWindowTitle("Edit Notification");
     ui->notificationTitleEdit->setText(node->props.value("title","").toString());
     ui->notificationMessageEdit->setText(node->props.value("message","").toString());
-    if(exec()){
+    if(exec()) {
         node->props["title"]=ui->notificationTitleEdit->text().trimmed();
         node->props["message"]=ui->notificationMessageEdit->text().trimmed();
         return true;
@@ -153,14 +153,14 @@ bool WfNodeEditDialog::editPlaySoundNode(WFNode*node) {
     ui->playSoundPathToSoundEdit->setText(node->props.value("sound","").toString());
     fillSoundLineEditContextMenu(ui->playSoundPathToSoundEdit);
 
-    connect(ui->playSoundPlayButton, &QPushButton::pressed, this, [this](){
+    connect(ui->playSoundPlayButton, &QPushButton::pressed, this, [this]() {
         QString path=ui->playSoundPathToSoundEdit->text().trimmed();
-        if(path.startsWith("bundled://")){
+        if(path.startsWith("bundled://")) {
             path=QString(":/sounds/res/sounds/") + path.mid(QString("bundled://").length());
         }
 
         QFileInfo fileInfo(path);
-        if(!fileInfo.exists()){
+        if(!fileInfo.exists()) {
             PlaceholderExpander placeholderExpander(appGlobals);
             if(placeholderExpander.containsPlaceholder(path)) {
                 QMessageBox::warning(this, "Error", tr("Cannot test file path that contains placeholders"),QMessageBox::Ok);
@@ -171,7 +171,7 @@ bool WfNodeEditDialog::editPlaySoundNode(WFNode*node) {
         }
         QSound::play(path);
     });
-    if(exec()){
+    if(exec()) {
         node->props["sound"]=ui->playSoundPathToSoundEdit->text().trimmed();
         return true;
     }

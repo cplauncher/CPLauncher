@@ -24,7 +24,7 @@ QString executableExtension() {
     return ".exe";
 }
 
-QStringList defaultSearchFolders(){
+QStringList defaultSearchFolders() {
     QStringList result;
     result<<"C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs|*.lnk;*.url;*.exe";
     result<<"C:\\Users\\Public\\Desktop|*.lnk;*.url;*.exe";

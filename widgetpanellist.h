@@ -20,8 +20,8 @@ template <typename T> class WidgetPanelList: public QWidget {
     int PADDING_LEFT=5;
     int PADDING_RIGHT=5;
     int PADDING_BETWEEN_ITEMS=5;
-    int min(int i1, int i2){ return (i1<i2)?i1:i2; }
-    int max(int i1, int i2){ return (i1>i2)?i1:i2; }
+    int min(int i1, int i2) { return (i1<i2)?i1:i2; }
+    int max(int i1, int i2) { return (i1>i2)?i1:i2; }
   protected:
     virtual void resizeEvent(QResizeEvent *event) override {
         if(event->oldSize().width()!=event->size().width()) {
@@ -86,7 +86,7 @@ template <typename T> class WidgetPanelList: public QWidget {
         }
     }
 
-    void setSelectionmarkForSelectedPanel(int index){
+    void setSelectionmarkForSelectedPanel(int index) {
         if(index!=-1) {
             int panelIndex=getItemPanelIndex(index);
             if(panelIndex!=-1) {
@@ -103,14 +103,14 @@ template <typename T> class WidgetPanelList: public QWidget {
 
     }
 
-    void init(){
+    void init() {
         preallocateItemWidgets();
         updateListHeight();
     }
 
     void preallocateItemWidgets() {
         //remove old
-        for(int i=0;i<itemPanels.size();i++){
+        for(int i=0;i<itemPanels.size();i++) {
             delete itemPanels[i];
         }
         itemPanels.clear();
@@ -128,7 +128,7 @@ template <typename T> class WidgetPanelList: public QWidget {
         PADDING_BETWEEN_ITEMS=between;
     }
 
-    QWidget* allocateNewItemPanel(){
+    QWidget* allocateNewItemPanel() {
         int y=getYForNewItemPanel();
         QWidget*itemPanel=createItemPanelCallback();
         itemPanel->show();
@@ -188,7 +188,7 @@ template <typename T> class WidgetPanelList: public QWidget {
     }
 
     void setSelectedIndex(int index) {
-        if(index==selectedIndex){
+        if(index==selectedIndex) {
             return;
         }
         //first deselect old selected item
