@@ -11,7 +11,7 @@
 #include "configurationdialog.h"
 #include "plugins.h"
 #include "browser.h"
-#include "testdialog.h"
+#include "aboutdialog.h"
 
 void test() {
 }
@@ -103,6 +103,13 @@ void showSettings(AppGlobals*appGlobals) {
     activateApp();
 }
 
+void showAbout(AppGlobals*appGlobals) {
+    qDebug()<<"Show about window";
+    AboutDialog* aboutDialog=new AboutDialog(NULL, appGlobals);
+    aboutDialog->show();
+    activateApp();
+}
+
 void hotkeyActivatorDeactivator(AppGlobals*appGlobals) {
     appGlobals->application->connect(appGlobals->application, &QApplication::focusChanged, appGlobals->application, [appGlobals](QWidget *oldWidget, QWidget *newWidget) {
         if(newWidget!=NULL && QString("CustomHotkeyEditor") == newWidget->metaObject()->className()) {
@@ -144,6 +151,11 @@ void refreshPlugins(AppGlobals*appGlobals) {
 void initTrayManager(AppGlobals*appGlobals) {
     TrayManager*trayManager=appGlobals->trayManager;
     trayManager->init(appGlobals);
+    trayManager->addMenu("About...", [appGlobals](){
+        qDebug() << "Show settings menu activated";
+        showAbout(appGlobals);
+        return true;
+    });
     trayManager->addMenu("Show settings...", [appGlobals]() {
         qDebug() << "Show settings menu activated";
         showSettings(appGlobals);
@@ -248,11 +260,34 @@ void refreshByTimer(AppGlobals*appGlobals) {
     timer->start(1*60*60*1000);//hour
 }
 
+void readVersion(AppGlobals&appGlobals) {
+    QString versionFilePath(":/raw/res/version.txt");
+    QFile file(versionFilePath);
+    file.open(QIODevice::ReadOnly);
+    QTextStream in(&file);
+    QString version;
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if(line.startsWith("@")){
+            version=line.mid(1);
+            break;
+        }
+    }
+    if(version.isNull()) {
+        qDebug()<<"Error while reading version file";
+    } else {
+        appGlobals.version=version;
+    }
+    qDebug()<<"Version "+version;
+    file.close();
+}
+
 int main(int argc, char *argv[]) {
     SingleApplication a(argc, argv, true);
     test();
 
     AppGlobals appGlobals;
+    readVersion(appGlobals);
     globalAppGlobals=&appGlobals;
     processPrimarySecondaryCopyStart(&a, &appGlobals);
     Configuration configuration;

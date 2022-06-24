@@ -1,0 +1,12 @@
+@0.2.1
+Fixed broken variables substitution
+@0.2.0
+Implemented copy to clipboard workflow node
+Added run url in browser workflow node
+Added lua scripting workflow node
+Implemented auto refresh index periodically
+[bug]Calculator shows big numbers in scientific notation
+Small improvements
+
+@0.1.0
+First release of version 0.1

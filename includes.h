@@ -66,6 +66,7 @@ public:
 
 class AppGlobals{
 public:
+    QString version;
     QApplication*application=NULL;
     Configuration*configuration=NULL;
     QMap<QString,AbstractPlugin*>plugins;

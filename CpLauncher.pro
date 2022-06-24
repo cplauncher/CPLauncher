@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     StatisticStorage.cpp \
+    aboutdialog.cpp \
     browser.cpp \
     configuration.cpp \
     configurationdialog.cpp \
@@ -32,7 +33,6 @@ SOURCES += \
     plugin_snippet.cpp \
     plugin_websearch.cpp \
     plugin_workflow.cpp \
-    testdialog.cpp \
     tinyexpr.c \
     traymanager.cpp \
     utils.cpp \
@@ -42,6 +42,7 @@ SOURCES += \
     wfnodehandlers.cpp
 
 HEADERS += \
+    aboutdialog.h \
     browser.h \
     configuration.h \
     configurationdialog.h \
@@ -61,7 +62,6 @@ HEADERS += \
     statisticstorage.h \
     svgitem.h \
     tablehelper.h \
-    testdialog.h \
     tinyexpr.h \
     utils.h \
     verticallayout.h \
@@ -97,11 +97,11 @@ RESOURCES += \
     resources.qrc
 
 FORMS += \
+    aboutdialog.ui \
     configurationdialog.ui \
     editsnippetdialog.ui \
     editsnippetscollectiondialog.ui \
     editwebsearchdialog.ui \
     logdialog.ui \
-    testdialog.ui \
     wfeditdetails_dialog.ui \
     wfnodeedit_dialog.ui

@@ -1,5 +1,5 @@
 /usr/libexec/PlistBuddy -c 'Add :LSUIElement bool true' ./CpLauncher.app/Contents/Info.plist
-${QT_DIR}/bin/macdeployqt CpLauncher.app -dmg
+/Users/dmitry/Qt/5.15.2/clang_64/bin/macdeployqt CpLauncher.app -dmg
 rm -rf CpLauncher.app/Contents/Frameworks/QtOpenGL.framework
 rm -rf CpLauncher.app/Contents/Frameworks/QtMultimediaWidgets.framework
 rm -rf CpLauncher.app/Contents/Frameworks/QtQml.framework
@@ -14,3 +14,5 @@ rm -rf CpLauncher.app/Contents/PlugIns/imageformats/libqtga.dylib
 rm -rf CpLauncher.app/Contents/PlugIns/imageformats/libqtiff.dylib
 rm -rf CpLauncher.app/Contents/PlugIns/imageformats/libqwebp.dylib
 zip -r CpLauncher.app.zip CpLauncher.app
+
+

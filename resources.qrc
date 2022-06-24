@@ -1,4 +1,7 @@
 <RCC>
+		<qresource prefix="/raw">
+			<file>res/version.txt</file>
+		</qresource>
     <qresource prefix="/icons">
         <file>res/default_icon.png</file>
         <file>res/tray_white.png</file>
