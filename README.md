@@ -57,7 +57,6 @@ Right now the list of blocks accessible in workflow is not very big, but I hope 
 
 
 ### How to Debug
-*TODO: make the build not depend on QtCreator*
 
 * Clone the repository with:
 
@@ -71,16 +70,28 @@ Right now the list of blocks accessible in workflow is not very big, but I hope 
 
 * Open in QtCreator and run.
 
-### How to build
+### How to build current master (OSX)
 
-* Make the all steps from **How to Debug** section
+* Download file build_master.py
 
-* Make release build in QtCreator
+* Specify necessary properties and execute it
 
-* In terminal navigate to build-CpLauncher*-Release folder
+*python build_master.py --output_dir "/Users/banana/CpLauncherReleases" --build_dir "/Users/banana/CpLauncherBuild" --qt_dir "/Users/banana/Qt5.15.2/" --qt_compiler "clang_64"*
 
-* Set environment variable QT_DIR to your compiler QT folder. For example "d:\Tools\QT\5.15.2\msvc2019" or "C:\QT\5.15.2\mingw81_64"
+This command should clone all necessary repositories and build zip file with application
 
-* Execute script **../CpLauncher/build_windows.bat** or **sh ../CpLauncher/build_osx.sh**
+### How to build current master (Window)
 
-* As a result you will receive CpLauncher folder with all necessary libraries
+* Clone repositories like in **How to Debug**
+
+* Open Developer Command Prompt for Visual Studio(Tested only with Visual Studio 2019) 
+
+* In command prompt navigate to CpLauncher folder
+
+* Execute:
+
+*SET QT_DIR=d:/Tools/QT/5.15.2/*
+
+*SET QT_COMPILER=msvc2019*    (your QT compiler version)
+
+*python build.py*
