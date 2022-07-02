@@ -30,6 +30,37 @@ int getVar(lua_State *state) {
     return 1;
 }
 
+
+
+int setVar(lua_State *state) {
+    int argsCount = lua_gettop (state);
+    if(argsCount!=2) {
+        qDebug()<<"lua \"setVar\" function expects following arguments (name, value)";
+        return 0;
+    }
+
+    WFExecutionContext*executionContext = (WFExecutionContext*)getUserDataFromGlobalVar(state, "executionContext");
+    QString varName=QString(lua_tostring(state, 1));
+    if(lua_isinteger(state, 2)){
+        int value=(int)lua_tointeger(state, 2);
+        QString varValue=QString::number(value);
+        executionContext->variables[varName]=varValue;
+    } else if(lua_isnumber(state, 2)){
+        double value=(double)lua_tonumber(state, 2);
+        QString varValue=QString::number(value, 'f', 7);
+        executionContext->variables[varName]=varValue;
+    } else if(lua_isstring(state, 2)) {
+        QString varValue=QString(lua_tostring(state, 2));
+        executionContext->variables[varName]=varValue;
+    } else if(lua_isnil(state, 2)) {
+        executionContext->variables[varName]="";
+    } else {
+        qDebug()<<"Cannot set ["<<varName<<"]. Only numbers and strings are supported";
+    }
+
+    return 0;
+}
+
 int output(lua_State *state) {
     int argsCount = lua_gettop (state);
     if(argsCount!=2) {
@@ -49,6 +80,21 @@ int output(lua_State *state) {
     WorkflowPlugin*plugin=(WorkflowPlugin*)appGlobals->plugins[CONF_WORKFLOW];
     executionContext->variables["input"]=data;
     nodeHandler->sendToOutput(plugin, port, *executionContext);
+    return 0;
+}
+
+int print(lua_State *state){
+    int argsCount = lua_gettop (state);
+    QDebug debug = qDebug();
+    debug.noquote().nospace();
+    for(int i=1;i<=argsCount;i++){
+        if(lua_isstring(state, i)) {
+            QString value=QString(lua_tostring(state, i));
+            debug<<value;
+        } else if(lua_isnil(state, i)) {
+            debug<<"nil";
+        }
+    }
     return 0;
 }
 
@@ -79,8 +125,10 @@ void LuaExecutor::execute(QString luaScript, WFExecutionContext*executionContext
     lua_pushlightuserdata(state,appGlobals);
     lua_setglobal(state, "appGlobal");
     lua_register(state, "var", getVar);
+    lua_register(state, "setVar", setVar);
     lua_register(state, "input", input);
     lua_register(state, "output", output);
+    lua_register(state, "print", print);
 
     lua_pushlightuserdata(state, executionContext);
     lua_setglobal(state, "executionContext");
