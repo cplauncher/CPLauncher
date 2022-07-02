@@ -1,5 +1,6 @@
 #include <QFileDialog>
 #include <QGraphicsRectItem>
+#include <QMenu>
 #include "configurationdialog.h"
 #include "ui_configurationdialog.h"
 #include "editsnippetscollectiondialog.h"
@@ -22,20 +23,44 @@ class GeneralConfigurationTabHandler {
 
     void init() {
         ui->whiteTrayIconCheckbox->setChecked(configuration->isWhiteTrayIcon);
-        ui->generalLauncherToggleHotkeyEditor->setHotkeyId("_toggleLauncherHotkey");
+        initHotkeyEditor();
+        QObject::connect(ui->whiteTrayIconCheckbox, &QCheckBox::stateChanged,dialog, [this]() {
+            configuration->isWhiteTrayIcon= ui->whiteTrayIconCheckbox->isChecked();
+            dialog->modified(CONF_GENERAL);
+        });
+    }
+
+    void initHotkeyEditor(){
+        CustomHotkeyEditor*hotkeyEditor=ui->generalLauncherToggleHotkeyEditor;
+        hotkeyEditor->setHotkeyId("_toggleLauncherHotkey");
         ui->generalLauncherToggleHotkeyEditor->setKeySequence(QKeySequence(configuration->toggleLauncherHotkey));
-        QObject::connect(ui->generalLauncherToggleHotkeyEditor, &CustomHotkeyEditor::editingFinished, dialog, [this]() {
-            QKeySequence keySequence=ui->generalLauncherToggleHotkeyEditor->keySequence();
+        QLineEdit *LineEdit = ui->generalLauncherToggleHotkeyEditor->findChild<QLineEdit *>();
+        if (LineEdit) {
+            LineEdit->setContextMenuPolicy(Qt::CustomContextMenu);
+
+            QObject::connect(LineEdit, &QLineEdit::customContextMenuRequested, [LineEdit, hotkeyEditor](QPoint pos) {
+                ContextMenuHelper menuHelper;
+                QMenu*menu=LineEdit->createStandardContextMenu();
+                #ifdef _WIN32
+                    menu->addSeparator();
+                    QAction*action=new QAction("Alt+Space", LineEdit);
+                    QObject::connect(action, &QAction::triggered, LineEdit, [hotkeyEditor](){
+                        hotkeyEditor->setKeySequence(QKeySequence("Alt+Space"));
+                        emit hotkeyEditor->editingFinished();
+                    });
+                    menu->addAction(action);
+                #endif
+                menu->popup(LineEdit->mapToGlobal(pos));
+            });
+        }
+        QObject::connect(hotkeyEditor, &CustomHotkeyEditor::editingFinished, dialog, [this, hotkeyEditor]() {
+            QKeySequence keySequence=hotkeyEditor->keySequence();
             QString newHotkey;
             if(keySequence.count()>0) {
                 newHotkey=keySequence.toString();
             }
 
             configuration->toggleLauncherHotkey=newHotkey;
-            dialog->modified(CONF_GENERAL);
-        });
-        QObject::connect(ui->whiteTrayIconCheckbox, &QCheckBox::stateChanged,dialog, [this]() {
-            configuration->isWhiteTrayIcon= ui->whiteTrayIconCheckbox->isChecked();
             dialog->modified(CONF_GENERAL);
         });
     }
@@ -528,7 +553,6 @@ class WebSearchConfigurationTabHandler {
 
 ConfigurationDialog::ConfigurationDialog(AppGlobals*appGlobals, Configuration*configuration, QWidget *parent) : QDialog(parent), ui(new Ui::ConfigurationDialog) {
     ui->setupUi(this);
-    //setWindowFlags(Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     this->configuration = configuration;
