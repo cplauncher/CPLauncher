@@ -80,18 +80,14 @@ Right now the list of blocks accessible in workflow is not very big, but I hope 
 
 This command should clone all necessary repositories and build zip file with application
 
-### How to build current master (Window)
-
-* Clone repositories like in **How to Debug**
+### How to build current master (Windows)
 
 * Open Developer Command Prompt for Visual Studio(Tested only with Visual Studio 2019) 
 
-* In command prompt navigate to CpLauncher folder
+* Download file build_master.py
 
-* Execute:
+* Specify necessary properties and execute it
 
-*SET QT_DIR=d:/Tools/QT/5.15.2/*
+*python build_master.py --build_dir "./CPLauncherBuild" --qt_dir "d:/Tools/QT/5.15.2/" --qt_compiler "msvc2019"*
 
-*SET QT_COMPILER=msvc2019*    (your QT compiler version)
-
-*python build.py*
+This command should clone all necessary repositories and build zip file with application
