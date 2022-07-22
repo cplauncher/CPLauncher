@@ -9,6 +9,7 @@ class TableHelper
     QList<T>values;
     QTableWidget*table;
     QString(*stringExtractor)(T object, int column);
+    void(*editValueApplyer)(QString newValue, T object, int column);
 
     void fillRow(int row, T value) {
         for(int i=0;i<table->columnCount();i++) {
@@ -34,7 +35,7 @@ public:
         values.clear();
     }
 
-    int rowCount() {
+    int rowCount() const{
         return table->rowCount();
     }
 
@@ -43,6 +44,10 @@ public:
         int row=rowCount();
         table->insertRow(row);
         fillRow(row, value);
+    }
+
+    void set(T value, int row){
+        values[row]=value;
     }
 
     void refreshRow(int row) {
@@ -55,14 +60,18 @@ public:
         table->removeRow(row);
     }
 
-    int getSelectedRow() {
+    //this method works only in case if table configured as
+    //setSelectionBehavior(QTableWidget::SelectRows);
+    int getSelectedRow()const {
         QItemSelectionModel *select = table->selectionModel();
         if(!select->hasSelection()) {
             return -1;
         }
-        return select->selectedRows().at(0).row();
+        QModelIndexList selectionModel=select->selectedRows();
+        return selectionModel.at(0).row();
     }
-    T getSelectedObject() {
+
+    T getSelectedObject() const{
         int selectedRow=getSelectedRow();
         if(selectedRow==-1) {
             return NULL;

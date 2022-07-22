@@ -8,12 +8,39 @@ class AbstractConfig {
     virtual void deserialize(QJsonObject json)=0;
 };
 
+class Variable{
+public:
+    QString name;
+    bool hidden;
+    QString value;
+    virtual QJsonObject serialize() {
+        QJsonObject json;
+        json["name"]=name;
+        json["hidden"]=hidden;
+        json["value"]=hidden?simpleEncrypt(value):value;
+        return json;
+    }
+    virtual void deserialize(QJsonObject json) {
+        name=json["name"].toString();
+        hidden=json["hidden"].toBool(false);
+        value=json["value"].toString();
+        if(hidden){
+            value=simpleDecrypt(value);
+        }
+    }
+};
+
+QJsonArray serializeVariables(QList<Variable>&variables);
+
+QList<Variable>deserializeVariables(QJsonArray jsonArray);
+
 class GeneralConfiguration:public AbstractConfig {
    public:
     QString toggleLauncherHotkey;
     bool isWhiteTrayIcon=false;
     int inputDialogPositionX;
     int inputDialogPositionY;
+    QList<Variable>globalVariables;
 
     virtual QJsonObject serialize() {
         QJsonObject json;
@@ -21,6 +48,7 @@ class GeneralConfiguration:public AbstractConfig {
         json["toggleLauncherHotkey"]=toggleLauncherHotkey;
         json["inputDialogPositionX"]=inputDialogPositionX;
         json["inputDialogPositionY"]=inputDialogPositionY;
+        json["globalVariables"]=serializeVariables(globalVariables);
         return json;
     }
     virtual void deserialize(QJsonObject json) {
@@ -28,6 +56,7 @@ class GeneralConfiguration:public AbstractConfig {
         toggleLauncherHotkey= json["toggleLauncherHotkey"].toString();
         inputDialogPositionX= json["inputDialogPositionX"].toInt(-1);
         inputDialogPositionY= json["inputDialogPositionY"].toInt(-1);
+        globalVariables = deserializeVariables(json["globalVariables"].toArray());
     }
 };
 class BrowserConfiguration:public AbstractConfig {
@@ -279,6 +308,7 @@ class WFWorkflow {
     QString author;
     QString website;
     QList<WFNode>nodes;
+    QList<Variable>wfVariables;
     virtual ~WFWorkflow() {}
     /**
      * The information is stored as:
@@ -312,6 +342,7 @@ class WFWorkflow {
         json["versionId"]=versionId;
         json["author"]=author;
         json["website"]=website;
+        json["wfVariables"]=serializeVariables(wfVariables);
         return json;
     }
 
@@ -324,6 +355,7 @@ class WFWorkflow {
         this->versionId=json["versionId"].toString();
         this->author=json["author"].toString();
         this->website=json["website"].toString();
+        this->wfVariables=deserializeVariables(json["wfVariables"].toArray());
         QJsonArray nodesArray=json["nodes"].toArray();
         for(int i=0;i<nodesArray.size();i++) {
             QJsonObject nodeJson=nodesArray[i].toObject();

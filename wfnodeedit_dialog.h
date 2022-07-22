@@ -24,6 +24,8 @@ public:
     bool editSelectorNode(WFNode*node);
     bool editOpenUrlNode(WFNode*node);
     bool editLuaScriptNode(WFNode*node);
+    bool editVars(QList<Variable>*variables);
+    bool editVariable(Variable*variable);
 
 private:
     void showPanel(QWidget*widget);

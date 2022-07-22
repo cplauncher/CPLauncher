@@ -50,3 +50,21 @@ Configuration* Configuration::saveAll(QStringList changedConfigurations) {
     }
     return this;
 }
+
+QJsonArray serializeVariables(QList<Variable>&variables){
+    QJsonArray jsonArray;
+    for(int i=0;i<variables.count();i++){
+        jsonArray.append(variables[i].serialize());
+    }
+    return jsonArray;
+}
+
+QList<Variable>deserializeVariables(QJsonArray jsonArray){
+    QList<Variable>result;
+    for(int i=0;i<jsonArray.count();i++){
+        Variable var;
+        var.deserialize(jsonArray[i].toObject());
+        result.append(var);
+    }
+    return result;
+}

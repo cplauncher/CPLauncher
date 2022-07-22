@@ -14,6 +14,7 @@
 #include "aboutdialog.h"
 
 void test() {
+
 }
 
 int MAX_LOG_LINES=1000;

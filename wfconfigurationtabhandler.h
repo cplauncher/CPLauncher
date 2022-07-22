@@ -29,16 +29,18 @@ class WorkflowListItem:public QListWidgetItem {
 class WorkflowConfigurationTabHandler {
     AppGlobals*appGlobals;
     ConfigurationDialog*dialog;
-    WorkflowConfiguration*configuration;
+    WorkflowConfiguration*wfConfiguration;
+    GeneralConfiguration*generalConfiguration;
     Ui::ConfigurationDialog *ui;
     CustomGraphicsScene*scene;
     QGraphicsView*view;
 
   public:
-    WorkflowConfigurationTabHandler(AppGlobals*appGlobals,ConfigurationDialog*dialog, WorkflowConfiguration*configuration, Ui::ConfigurationDialog *ui) {
+    WorkflowConfigurationTabHandler(AppGlobals*appGlobals,ConfigurationDialog*dialog, GeneralConfiguration*generalConfiguration, WorkflowConfiguration*wfConfiguration, Ui::ConfigurationDialog *ui) {
         this->appGlobals = appGlobals;
         this->dialog = dialog;
-        this->configuration = configuration;
+        this->generalConfiguration = generalConfiguration;
+        this->wfConfiguration = wfConfiguration;
         this->ui = ui;
     }
 
@@ -54,8 +56,11 @@ class WorkflowConfigurationTabHandler {
         QObject::connect(ui->wfWorkflowsList, &QListWidget::doubleClicked,ui->wfWorkflowsList, [this]() {editWorkflowDetails();});
         QObject::connect(ui->wfWorkflowsList, &QListWidget::itemSelectionChanged,ui->wfWorkflowsList, [this]() {onWorkflowSelected();});
 
-        for(int i=0;i<configuration->workflows.size();i++) {
-            WFWorkflow*workflow=&configuration->workflows[i];
+        QObject::connect(ui->wfGlobalVarsButton, &QPushButton::pressed, ui->wfGlobalVarsButton, [this]() { editGlobalVariables(); });
+        QObject::connect(ui->wfLocalVarsButton, &QPushButton::pressed, ui->wfLocalVarsButton, [this]() { editLocalVariables(); });
+
+        for(int i=0;i<wfConfiguration->workflows.size();i++) {
+            WFWorkflow*workflow=&wfConfiguration->workflows[i];
             WorkflowListItem*listItem=new WorkflowListItem( ui->wfWorkflowsList, workflow);
             listItem->setText(workflow->name);
             ui->wfWorkflowsList->addItem(listItem);
@@ -66,6 +71,27 @@ class WorkflowConfigurationTabHandler {
         }
 
         updateEditableStatus();
+    }
+
+    void editGlobalVariables() {
+        WfNodeEditDialog editDialog(dialog, appGlobals);
+        if(editDialog.editVars(&generalConfiguration->globalVariables)) {
+            dialog->modified(CONF_GENERAL);
+            return;
+        }
+    }
+
+    void editLocalVariables() {
+        WFWorkflow*wf=getSelectedWorkflow();
+        if(wf==NULL) {
+            return;
+        }
+
+        WfNodeEditDialog editDialog(dialog, appGlobals);
+        if(editDialog.editVars(&wf->wfVariables)) {
+            dialogModified();
+            return;
+        }
     }
 
     QAction*createMenuAction(QString text, std::function<void()>onClick) {
@@ -347,8 +373,8 @@ class WorkflowConfigurationTabHandler {
             workflow.author=result.getString("author");
             workflow.website=result.getString("website");
             workflow.versionId=generateRandomString();
-            configuration->workflows.append(workflow);
-            WFWorkflow*wfPointer=&configuration->workflows.last();
+            wfConfiguration->workflows.append(workflow);
+            WFWorkflow*wfPointer=&wfConfiguration->workflows.last();
             WorkflowListItem*listItem=new WorkflowListItem( ui->wfWorkflowsList, wfPointer);
             listItem->setText(workflow.name);
             ui->wfWorkflowsList->addItem(listItem);
@@ -387,7 +413,7 @@ class WorkflowConfigurationTabHandler {
 
         int row=ui->wfWorkflowsList->row(workflowListItem);
         ui->wfWorkflowsList->takeItem(row);
-        configuration->workflows.takeAt(row);
+        wfConfiguration->workflows.takeAt(row);
         dialogModified();
         updateEditableStatus();
     }
@@ -568,6 +594,7 @@ class WorkflowConfigurationTabHandler {
         bool workflowSelected=getSelectedWorkflow()!=NULL;
         ui->wfScene->setEnabled(workflowSelected);
         ui->wfRemoveWorkflowButton->setEnabled(workflowSelected);
+        ui->wfLocalVarsButton->setEnabled(workflowSelected);
         if(!workflowSelected) {
             scene->clear();
         }

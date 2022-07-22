@@ -207,3 +207,28 @@ QStringList splitCsvLine(QString string, QString separator, QString quote) {
 
     return result;
 }
+
+uchar EncKey[]={0x65,0xFF,0x10,0x99,0x09,0xA8,0xE1,0x36,0x63,0x27};
+int EncKeyLength=10;
+QString simpleEncrypt(QString string) {
+    QString result="01";
+    QByteArray bytes=string.toUtf8();
+
+    for(int i=0;i<bytes.length();i++){
+        bytes[i]=bytes[i]^EncKey[i%EncKeyLength];
+    }
+    return QString("01")+QString::fromLatin1(bytes.toBase64().data());
+}
+
+QString simpleDecrypt(QString string) {
+    if(string.startsWith("01")){
+        string=string.mid(2);
+        QByteArray bytes=QByteArray::fromBase64(string.toLatin1());
+        for(int i=0;i<bytes.length();i++){
+            bytes[i]=bytes[i]^EncKey[i%EncKeyLength];
+        }
+        return QString::fromUtf8(bytes);
+    }else{
+        return string;
+    }
+}

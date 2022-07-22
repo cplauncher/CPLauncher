@@ -1,5 +1,6 @@
 #include <QMessageBox>
 #include <QSound>
+#include "tablehelper.h"
 #include "wfnodeedit_dialog.h"
 #include "ui_wfnodeedit_dialog.h"
 #include "placeholderexpander.h"
@@ -248,6 +249,110 @@ bool WfNodeEditDialog::editLuaScriptNode(WFNode*node) {
     ui->luaScriptSourceEdit->setText(node->props.value("luaScript","").toString());
     if(exec()) {
         node->props["luaScript"]=ui->luaScriptSourceEdit->toPlainText().trimmed();
+        return true;
+    }
+
+    return false;
+}
+
+QString variableToString(Variable*var, int column) {
+    if(column==0) {
+        return var->name;
+    } else if(column==1) {
+        return var->hidden
+            ? QString("*").repeated(var->value.length())
+            : var->value;
+    }
+    return "unknown column";
+}
+
+bool WfNodeEditDialog::editVars(QList<Variable>*variables) {
+    showPanel(ui->varsPanel);
+    setWindowTitle("Edit Variables");
+    QList<Variable>_variables=*variables;
+    TableHelper<Variable*>tableHelper(ui->varsTable, 2, variableToString);
+
+    QStringList varsTableHeader;
+    varsTableHeader<<"Variable"<<"Value";
+    ui->varsTable->setHorizontalHeaderLabels(varsTableHeader);
+    ui->varsTable->setSelectionMode(QTableWidget::SingleSelection);
+    ui->varsTable->setSelectionBehavior(QTableWidget::SelectRows);
+    ui->varsTable->verticalHeader()->setVisible(false);
+    ui->varsTable->horizontalHeader()->setStretchLastSection(true);
+    ui->varsTable->setEditTriggers(QTableWidget::NoEditTriggers);
+    for(int i=0;i<_variables.count();i++)tableHelper.add((Variable*)&(_variables.at(i)));
+
+    auto checkEditableStatus=[&tableHelper, this]() {
+        bool selected=tableHelper.getSelectedRow()!=-1;
+        ui->varsRemoveVarButton->setEnabled(selected);
+    };
+
+    connect(ui->varsTable, &QTableWidget::itemSelectionChanged, ui->varsTable, [&checkEditableStatus]() {
+        checkEditableStatus();
+    });
+
+    connect(ui->varsTable, &QTableWidget::cellDoubleClicked, ui->varsTable, [this, &tableHelper, &_variables]() {
+        int row = tableHelper.getSelectedRow();
+        if(row == -1) {
+            return;
+        }
+
+        Variable*var = &_variables[row];
+        WfNodeEditDialog editDialog(this, appGlobals);
+        if(editDialog.editVariable(var)) {
+            tableHelper.set(var, row);
+            tableHelper.refreshRow(row);
+        }
+    });
+    connect(ui->varsAddVarButton, &QPushButton::pressed, this, [&_variables, &tableHelper, &checkEditableStatus]() {
+        Variable var;
+        var.name="Variable";
+        var.hidden=false;
+        var.value="";
+        _variables.append(var);
+        tableHelper.add(&(_variables.last()));
+        checkEditableStatus();
+    });
+    connect(ui->varsRemoveVarButton, &QPushButton::pressed, this, [&_variables, &tableHelper, &checkEditableStatus]() {
+        if(tableHelper.getSelectedRow()!=-1){
+            _variables.removeAt(tableHelper.getSelectedRow());
+            tableHelper.remove(tableHelper.getSelectedRow());
+        }
+        checkEditableStatus();
+    });
+    checkEditableStatus();
+    if(exec()) {
+        *variables=_variables;
+        return true;
+    }
+
+    return false;
+}
+
+bool WfNodeEditDialog::editVariable(Variable*variable) {
+    showPanel(ui->editVarPanel);
+    setWindowTitle("Edit Variable");
+    ui->editVarNameEdit->setText(variable->name);
+    ui->editVarValueEdit->setText(variable->value);
+    ui->editVarHiddenCB->setChecked(variable->hidden);
+    if(variable->hidden){
+        ui->editVarValueEdit->setEchoMode(QLineEdit::Password);
+    }
+
+    connect(ui->editVarHiddenCB, &QCheckBox::stateChanged, ui->editVarHiddenCB, [this](){
+        bool newHiddenState = ui->editVarHiddenCB->isChecked();
+        if(newHiddenState==false){
+            ui->editVarValueEdit->setText("");
+            ui->editVarValueEdit->setEchoMode(QLineEdit::Normal);
+        } else {
+            ui->editVarValueEdit->setEchoMode(QLineEdit::Password);
+        }
+    });
+
+    if(exec()) {
+        variable->name=ui->editVarNameEdit->text().trimmed();
+        variable->hidden=ui->editVarHiddenCB->isChecked();
+        variable->value=ui->editVarValueEdit->text().trimmed();
         return true;
     }
 

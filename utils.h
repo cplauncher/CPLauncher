@@ -25,4 +25,6 @@ class MyThread : public QThread{
  };
 QStringList splitCsvLine(QString string, QString separator, QString quote);
 
+QString simpleEncrypt(QString string);
+QString simpleDecrypt(QString string);
 #endif // UTILS_H

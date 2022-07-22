@@ -254,7 +254,7 @@ class SnippetsTabHandler {
         this->dialog = dialog;
         this->configuration = configuration;
         this->ui = ui;
-        snippetTableHelper=new TableHelper<Snippet*>(ui->snipTable,2, snippetToString);
+        snippetTableHelper=new TableHelper<Snippet*>(ui->snipTable, 2, snippetToString);
     }
 
     ~SnippetsTabHandler() {
@@ -571,7 +571,7 @@ ConfigurationDialog::ConfigurationDialog(AppGlobals*appGlobals, Configuration*co
     browserTabHandler->init();
     webSearchTabHandler=new WebSearchConfigurationTabHandler(this, &configuration->webSearchConfiguration, ui);
     webSearchTabHandler->init();
-    workflowTabHandler=new WorkflowConfigurationTabHandler(appGlobals, this, &configuration->workflowConfiguration, ui);
+    workflowTabHandler=new WorkflowConfigurationTabHandler(appGlobals, this, &configuration->generalConfiguration, &configuration->workflowConfiguration, ui);
     workflowTabHandler->init();
 }
 
