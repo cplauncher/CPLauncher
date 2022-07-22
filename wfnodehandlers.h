@@ -607,6 +607,50 @@ class LuaScriptWFNodeHandler:public WFNodeHandler {
     }
 };
 
+class DebugWFNodeHandler:public WFNodeHandler {
+  public:
+    DebugWFNodeHandler(AppGlobals*appGlobals, WFNode*configNode)
+        :WFNodeHandler(appGlobals, configNode, ":/workflow/res/wf/basic_transformer.svg") {
+        refreshTitleDescription();
+    }
+
+    bool showConfiguration(QWidget*parent=0) override {
+        WfNodeEditDialog dialog(parent, appGlobals);
+        if(dialog.editDebug(configNode)) {
+            refreshTitleDescription();
+            nodeItem->updateAfterSettingsChange();
+            return true;
+        }
+        return false;
+    }
+
+    void refreshTitleDescription() override {
+        title="Debug";
+        description=getLabel();
+    }
+
+    QString getLabel() {
+        return configNode->props["label"].toString();
+    }
+
+    bool shouldPrintVars() {
+        return configNode->props["printVars"].toBool();
+    }
+
+    void execute(WFExecutionContext&context, int inputPortIndex, WorkflowPlugin*plugin) override {
+        Q_UNUSED(inputPortIndex);
+        Q_UNUSED(plugin);
+        qDebug()<<"Debug node with label ["<<getLabel()<<"]";
+        if(shouldPrintVars()) {
+            qDebug()<<"\tVariables:";
+            foreach(QString varName, context.variables.keys()) {
+                qDebug()<<"\t"<<varName<<"="<<context.variables[varName].toString();
+            }
+        }
+        sendToOutput(plugin, 0, context);
+    }
+};
+
 
 WFNodeHandler*createWFHandlerByType(QString type, WFNode*wfNode, AppGlobals*appGlobals);
 #endif // WFNODEHANDLERS_H

@@ -63,14 +63,14 @@ class WorkflowMatcher :public AbstractMatcher {
     }
 
     void execute(InputItem*inputItem) override {
-        QVariantMap userObject=inputItem->userObject.toMap();
-        QString workflowId=userObject["workflowId"].toString();
-        QString nodeId=userObject["nodeId"].toString();
-        QString arg=userObject["arg"].toString();
+        QVariantMap userObject = inputItem->userObject.toMap();
+        QString workflowId = userObject["workflowId"].toString();
+        QString nodeId = userObject["nodeId"].toString();
+        QString arg = userObject["arg"].toString();
         WFExecutionContext context;
-        context.workflowId=workflowId;
-        context.executionId=generateRandomString();
-        context.variables["input"]=arg;
+        context.workflowId = workflowId;
+        context.executionId = generateRandomString();
+        context.variables["input"] = arg;
         plugin->runWorkflow(workflowId, nodeId, 0, context);
     }
 };
@@ -80,8 +80,8 @@ void WorkflowPlugin::initDefaultConfiguration(AbstractConfig*) {
 }
 
 void WorkflowPlugin::init(AppGlobals*appGlobals) {
-    this->appGlobals=appGlobals;
-    matcher=new WorkflowMatcher(this);
+    this->appGlobals = appGlobals;
+    matcher = new WorkflowMatcher(this);
     refresh();
 }
 
@@ -101,7 +101,7 @@ void WorkflowPlugin::refresh() {
 
     WorkflowConfiguration*config=&appGlobals->configuration->workflowConfiguration;
 
-    for(int i=0;i<config->workflows.size();i++) {
+    for(int i=0; i<config->workflows.size(); i++) {
         WFWorkflow*workflow=&config->workflows[i];
         for(int j=0;j<workflow->nodes.size();j++) {
             WFNode*node=&workflow->nodes[j];
@@ -159,6 +159,29 @@ void WorkflowPlugin::initExternalTriggerWorkflowNode(WFNode*node, WFWorkflow*wor
     externalTriggers.insert(triggerId, wfNode);
 }
 
+void fillExecutionContextVariables(AppGlobals*appGlobals, WFExecutionContext*executionContext, WFWorkflow*workflow) {
+    //first - collect variables in temp map
+    QMap<QString, QVariant>collectedVars;
+    QList<Variable>variables = appGlobals->configuration->generalConfiguration.globalVariables;
+    for(int i=0;i<variables.count();i++) {
+        Variable*var=&variables[i];
+        collectedVars[var->name]=var->value;
+    }
+
+    variables = workflow->wfVariables;
+    for(int i=0; i<variables.count(); i++) {
+        Variable*var=&variables[i];
+        collectedVars[var->name]=var->value;
+    }
+
+    //second - add variables to context, but preserving already existing variables
+    foreach(QString varName, collectedVars.keys()) {
+        if(!executionContext->variables.contains(varName)) {
+            executionContext->variables[varName]=collectedVars[varName];
+        }
+    }
+}
+
 void WorkflowPlugin::runWorkflow(QString workflowId, QString nodeId, int inputPortIndex, WFExecutionContext executionContext) {
     WFWorkflow*workflow = appGlobals->configuration->workflowConfiguration.findWorkflow(workflowId);
     if(workflow==NULL) {
@@ -166,6 +189,7 @@ void WorkflowPlugin::runWorkflow(QString workflowId, QString nodeId, int inputPo
         return;
     }
 
+    fillExecutionContextVariables(appGlobals, &executionContext, workflow);
     WFNode*node = workflow->findNodeById(nodeId);
     if(node==NULL) {
         qDebug()<<"Unknown nodeId:"<<nodeId<<" in workflowId:"<<workflowId;

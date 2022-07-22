@@ -358,3 +358,17 @@ bool WfNodeEditDialog::editVariable(Variable*variable) {
 
     return false;
 }
+
+bool WfNodeEditDialog::editDebug(WFNode*node) {
+    showPanel(ui->debugPanel);
+    setWindowTitle("Edit Debug");
+    ui->debugLabelEdit->setText(node->props["label"].toString());
+    ui->debugPrintVarsCB->setChecked(node->props["printVars"].toBool());
+    if(exec()) {
+        node->props["label"]=ui->debugLabelEdit->text().trimmed();
+        node->props["printVars"]=ui->debugPrintVarsCB->isChecked();
+        return true;
+    }
+
+    return false;
+}

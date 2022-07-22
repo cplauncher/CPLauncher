@@ -143,11 +143,16 @@ class WorkflowConfigurationTabHandler {
            addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("copy_clipboard")), scenePos);
            dialogModified();
         });
+        QAction*debugAction=createMenuAction("Debug", [scenePos, this]() {
+           addNodeItem(setDefaultConfig(addWFNodeAndHandlerByType("debug")), scenePos);
+           dialogModified();
+        });
         QMenu*transformersSubMenu=new QMenu("Transformers");
         transformersSubMenu->addAction(addExtScriptAction);
         transformersSubMenu->addAction(addLuaScriptAction);
         transformersSubMenu->addAction(addSelectorAction);
         transformersSubMenu->addAction(copyToClipboardAction);
+        transformersSubMenu->addAction(debugAction);
 
         //Add actions items
         QAction*addExecAction=createMenuAction("Execute App", [scenePos, this]() {

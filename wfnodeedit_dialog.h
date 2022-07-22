@@ -26,6 +26,7 @@ public:
     bool editLuaScriptNode(WFNode*node);
     bool editVars(QList<Variable>*variables);
     bool editVariable(Variable*variable);
+    bool editDebug(WFNode*node);
 
 private:
     void showPanel(QWidget*widget);
