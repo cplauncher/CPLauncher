@@ -183,7 +183,7 @@ void initHotkeyManager(AppGlobals*appGlobals) {
     appGlobals->hotkeyManager->init(appGlobals);
 }
 
-void runWorkflowByTrigger(AppGlobals*appGlobals, QString triggerId) {
+void runWorkflowByTrigger(AppGlobals*appGlobals, QString triggerId, QStringList args) {
     WorkflowPlugin*workflowPlugin=(WorkflowPlugin*)appGlobals->plugins[CONF_WORKFLOW];
     if(workflowPlugin->externalTriggers.contains(triggerId)) {
         QList<WFNodeIdentifier>nodes=workflowPlugin->externalTriggers.values(triggerId);
@@ -191,10 +191,17 @@ void runWorkflowByTrigger(AppGlobals*appGlobals, QString triggerId) {
         for(int i=0;i<nodes.size();i++) {
             WFNodeIdentifier*wfNode=&nodes[i];
             WFExecutionContext executionContext;
+            executionContext.variables["argsCount"]=args.size();
+            for(int i=0;i<args.size();i++){
+                executionContext.variables[QString("arg%1").arg(i)]=args[i];
+            }
+
             executionContext.executionId=generateRandomString();
             executionContext.workflowId=wfNode->workflowId;
             workflowPlugin->runWorkflow(wfNode->workflowId, wfNode->nodeId, 0, executionContext);
         }
+    } else {
+        qDebug()<<"Trigger "<<triggerId<<"is not found";
     }
 }
 
@@ -208,18 +215,30 @@ void receivedMessageFromSecondCopy(AppGlobals*appGlobals, QString data) {
     QString type=jsonConfig["type"].toString();
     if(type=="runTrigger") {
         QString triggerId=jsonConfig["triggerId"].toString();
+        QStringList args;
+        if(jsonConfig.contains("args")){
+            QJsonArray argsJson=jsonConfig["args"].toArray();
+            for(int i=0;i<argsJson.count();i++){
+                args.append(argsJson[i].toString());
+            }
+        }
         qInfo()<<"Run trigger "<<triggerId;
-        runWorkflowByTrigger(appGlobals, triggerId);
+        runWorkflowByTrigger(appGlobals, triggerId, args);
     } else {
         qWarning()<<"Unknown type '"<<type<<"' received from second app copy";
         return;
     }
 }
 
-void sendStartWorkflowAndExit(SingleApplication*application, QString triggerId) {
+void sendStartWorkflowAndExit(SingleApplication*application, QString triggerId, QStringList args) {
     QJsonObject jsonObject;
     jsonObject["type"]="runTrigger";
     jsonObject["triggerId"]=triggerId;
+    QJsonArray jsonArgs;
+    foreach(QString arg, args){
+        jsonArgs.append(arg);
+    }
+    jsonObject["args"]=jsonArgs;
     application->sendMessage(jsonToString(jsonObject).toUtf8() ,1000);
     exit(0);
 }
@@ -232,23 +251,25 @@ void processPrimarySecondaryCopyStart(SingleApplication*application, AppGlobals*
             receivedMessageFromSecondCopy(appGlobals, QString::fromUtf8(message));
         });
     } else {
+        QTextStream out(stderr);
         QStringList arguments=application->arguments();
         for(int i=1;i<arguments.size();i++) {
             QString arg=arguments[i];
             if(arg=="-t" || arg=="--trigger") {
                 if(i+1>=arguments.size()) {
-                    qDebug()<<"argument --trigger {ID} expects trigger id";
+                    out<<"argument --trigger {ID} expects trigger id";
                     exit(1);
                 }
                 QString triggerId=arguments[i+1];
-                sendStartWorkflowAndExit(application, triggerId);
-            }else{
-                qDebug() << "Unknown argument "<<arg;
+                QStringList restOfArgs=arguments.mid(i+2);
+                sendStartWorkflowAndExit(application, triggerId, restOfArgs);
+            } else {
+                out << "Unknown argument "<<arg;
                 exit(1);
             }
         }
 
-        qDebug()<<"Cannot start second copy of application. Only --trigger option is allowed";
+        out<<"Cannot start second copy of application. Only --trigger option is allowed";
         exit(1);
     }
 }
