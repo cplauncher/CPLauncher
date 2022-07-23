@@ -197,6 +197,7 @@ bool WfNodeEditDialog::editExternalScriptNode(WFNode*node) {
     ui->extScriptAppPath->setText(node->props.value("appPath","").toString());
     ui->extScriptScriptEdit->setPlainText(node->props.value("script","").toString());
     ui->extScriptCaptureOutputCB->setChecked(node->props.value("captureOutput",false).toBool());
+    ui->extScriptProcessJsonOutputCB->setChecked(node->props.value("processJsonOutput",false).toBool());
     connect(ui->extScriptHelpLabel, &QLabel::linkActivated,this, [this](QString) {
         ui->extScriptAppPath->insert("python ${scriptFilePath}");
     });
@@ -204,6 +205,7 @@ bool WfNodeEditDialog::editExternalScriptNode(WFNode*node) {
         node->props["appPath"]=ui->extScriptAppPath->text().trimmed();
         node->props["script"]=ui->extScriptScriptEdit->toPlainText().trimmed();
         node->props["captureOutput"]=ui->extScriptCaptureOutputCB->isChecked();
+        node->props["processJsonOutput"]=ui->extScriptProcessJsonOutputCB->isChecked();
         return true;
     }
 

@@ -38,7 +38,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>13</number>
      </property>
      <widget class="QWidget" name="hotkeyPanel">
       <property name="sizePolicy">
@@ -577,6 +577,45 @@
          </property>
         </widget>
        </item>
+       <item row="3" column="0">
+        <widget class="QWidget" name="widget_3" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="extScriptCaptureOutputCB">
+            <property name="text">
+             <string>Capture output</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="extScriptProcessJsonOutputCB">
+            <property name="text">
+             <string>Process JSON output</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>Script</string>
+         </property>
+        </widget>
+       </item>
        <item row="5" column="0" colspan="2">
         <widget class="QPlainTextEdit" name="extScriptScriptEdit">
          <property name="sizePolicy">
@@ -587,20 +626,6 @@
          </property>
          <property name="tabStopDistance">
           <double>20.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="extScriptCaptureOutputCB">
-         <property name="text">
-          <string>Capture output</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_19">
-         <property name="text">
-          <string>Script</string>
          </property>
         </widget>
        </item>

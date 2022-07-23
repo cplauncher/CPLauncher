@@ -163,8 +163,7 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
         process->setArguments(arguments);
         QString workingDir=getWorkingDir(workDir, expandedApplicationPath);
         process->setWorkingDirectory(workingDir);
-        process->setStandardOutputFile(QProcess::nullDevice());
-        process->setStandardErrorFile(QProcess::nullDevice());
+
         if(!envMap.isEmpty()) {
             process->setProcessEnvironment(createEnvironmentVariables(envMap, pe, &context));
         }
@@ -172,6 +171,8 @@ class ExecAppActionWFNodeHandler:public WFNodeHandler {
         if(detached) {
             process->startDetached();
         } else {
+            process->setStandardOutputFile(QProcess::nullDevice());
+            process->setStandardErrorFile(QProcess::nullDevice());
             QObject::connect(process, &QProcess::stateChanged, process,[this, configNodeId, process](QProcess::ProcessState state) {
                 if(state==QProcess::NotRunning) {
                     int code=process->exitCode();
@@ -239,8 +240,9 @@ class NotificationWFNodeHandler:public WFNodeHandler {
         Q_UNUSED(inputPortIndex);
         QString title=configNode->props["title"].toString();
         QString message=configNode->props["message"].toString();
-        message=message.replace("${input}", context.variables["input"].toString());
-        title=title.replace("${input}", context.variables["input"].toString());
+        PlaceholderExpander expander(appGlobals);
+        message=expander.expand(message, &context);
+        title=expander.expand(title, &context);
         appGlobals->trayManager->showMessage(title, message);
     }
 };
@@ -373,7 +375,7 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
 
         bool asInputStream=configNode->props.value("asInputStream").toBool();
         bool captureOutput=configNode->props.value("captureOutput").toBool();
-
+        bool processJsonOutput=configNode->props.value("processJsonOutput", false).toBool();
         QString script = configNode->props.value("script").toString();
         script = expander.expand(script, &context);
         if(!asInputStream) {
@@ -408,13 +410,18 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
         process->setEnvironment(QStringList()<<"PYTHONIOENCODING=utf-8");
         QString*output=new QString();
         QString*error=new QString();
-        QObject::connect(process, &QProcess::stateChanged, process, [this, plugin, output,error, process, context](QProcess::ProcessState state) {
+        QObject::connect(process, &QProcess::stateChanged, process, [this, plugin, output,error, process, context, processJsonOutput](QProcess::ProcessState state) {
             if(state==QProcess::NotRunning) {
                 int code=process->exitCode();
                 qDebug()<<"script finished with exit code "<<code;
                 if(code==0) {
                     WFExecutionContext contextCopy=context;
-                    contextCopy.variables["input"]=output->trimmed();
+                    if(processJsonOutput) {
+                        this->processJsonOutput(output->trimmed(), contextCopy);
+                    } else {
+                        contextCopy.variables["input"]=output->trimmed();
+                    }
+
                     delete output;
                     delete error;
                     sendToOutput(plugin, 0, contextCopy);
@@ -442,6 +449,48 @@ class ExternalScriptWFNodeHandler:public WFNodeHandler {
         });
 
         process->start();
+    }
+
+    void processJsonOutput(QString output,  WFExecutionContext&context){
+        QJsonDocument jsonDocument=QJsonDocument::fromJson(output.toUtf8());
+        if(!jsonDocument.isObject()){
+            qDebug()<<"Root of the json captured from external script should be Json Object. Skipped";
+            return;
+        }
+
+        QJsonObject obj=jsonDocument.object();
+        foreach(QString key, obj.keys()) {
+            if(key=="vars") {
+                if(!obj["vars"].isArray()) {
+                    qDebug()<<"\"vars\" in json captured from external script should be Json Array. Skipped";
+                    return;
+                }
+                QJsonArray varsArray=obj["vars"].toArray();
+                for(int i=0;i<varsArray.size();i++) {
+                    if(!varsArray[i].isObject()){
+                        qDebug()<<"Variable in \"vars\" section of json captured from external script should be Json Object. Skipped";
+                        return;
+                    }
+                    QJsonObject varJson=varsArray[i].toObject();
+                    if(!varJson.contains("name")||!varJson.contains("value")){
+                        qDebug()<<"Variable in \"vars\" section of json captured from external script should have \"name\" and \"value\" fields. Skipped";
+                        return;
+                    }
+                    context.variables[varJson["name"].toString()]=varJson["value"].toString();
+                }
+            } else if(key=="print") {
+                if(!obj["print"].isArray()) {
+                    qDebug()<<"\"print\" in json captured from external script should be Json Array. Skipped";
+                    return;
+                }
+                QJsonArray printArray=obj["print"].toArray();
+                for(int i=0;i<printArray.size();i++) {
+                    qDebug()<<printArray[i].toString();
+                }
+            } else {
+                qDebug()<<"Json captured from external script contains unknown field "<<key<<". Skipped";
+            }
+        }
     }
 };
 
