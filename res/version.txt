@@ -1,3 +1,11 @@
+@0.2.2
+Added arguments to external workflow triggers
+Implemented way to set variables from external scripts
+Added Debug workflow node to have some way to inspect workflows with debug output
+Added global and local workflow variables edit dialog
+Set smaller tab width in most text edit components
+Added lua setVar and print functions
+Hotkey editor cannot accept Alt+Space on Windows
 @0.2.1
 Fixed broken variables substitution
 @0.2.0
