@@ -43,7 +43,8 @@ def prepare():
 
 def build_osx():
     print("Build platform: OSX")
-    run([f'{full_qt_dir}/bin/qmake', f'{source_folder}/CpLauncher.pro', '-spec', 'macx-clang', 'CONFIG+=qtquickcompiler'])
+    run([f'{full_qt_dir}/bin/qmake', f'{source_folder}/CpLauncher.pro', '-spec', 'macx-clang',
+         'CONFIG+=qtquickcompiler'])
     run(['/usr/bin/make', 'qmake_all'])
     run(['make', '-j12'])
     if not os.path.exists("./CpLauncher.app"):
@@ -64,14 +65,17 @@ def build_osx():
     remove_file('CpLauncher.app/Contents/PlugIns/imageformats/libqtiff.dylib')
     remove_file('CpLauncher.app/Contents/PlugIns/imageformats/libqwebp.dylib')
     version = get_version()
-    shutil.make_archive("CpLauncher_" + version + "_OSX.app", 'zip', 'CpLauncher.app')
+    wrapper_folder = "appFolder"
+    shutil.move("CpLauncher.app", wrapper_folder + "/CpLauncher.app")
+    shutil.make_archive("CpLauncher_" + version + "_OSX.app", 'zip', wrapper_folder)
     print("Finish")
 
 
 def build_windows():
     print("Build platform: Windows")
 
-    run([f'{full_qt_dir}/bin/qmake.exe', f'{source_folder}/CpLauncher.pro', '-spec', 'win32-msvc', 'CONFIG+=qtquickcompiler'])
+    run([f'{full_qt_dir}/bin/qmake.exe', f'{source_folder}/CpLauncher.pro', '-spec', 'win32-msvc',
+         'CONFIG+=qtquickcompiler'])
     run([f'{QT_DIR}/../Tools/QtCreator/bin/jom/jom.exe', 'qmake_all'])
     run([f'{QT_DIR}/../Tools/QtCreator/bin/jom/jom.exe', '-f', 'Makefile.Release'])
     if not os.path.exists("release/CpLauncher.exe"):
